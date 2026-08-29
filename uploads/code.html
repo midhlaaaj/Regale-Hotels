@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+
+<html class="scroll-smooth" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Regale Hotels &amp; Resorts</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&amp;family=Hanken+Grotesk:ital,wght@0,100..900;1,100..900&amp;family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-background": "#1b1c19",
+                        "surface-variant": "#e4e2dd",
+                        "primary-fixed-dim": "#ffb59e",
+                        "surface-tint": "#a0401f",
+                        "surface-dim": "#dbdad5",
+                        "secondary-fixed-dim": "#b4cdb8",
+                        "surface-container": "#f0eee9",
+                        "tertiary": "#614504",
+                        "inverse-on-surface": "#f2f1ec",
+                        "on-tertiary-container": "#ffd993",
+                        "surface-container-high": "#eae8e3",
+                        "inverse-surface": "#30312e",
+                        "secondary": "#4d6453",
+                        "primary-fixed": "#ffdbd0",
+                        "on-tertiary": "#ffffff",
+                        "surface-container-low": "#f5f3ee",
+                        "on-primary-fixed-variant": "#802909",
+                        "on-tertiary-fixed-variant": "#5d4201",
+                        "on-surface-variant": "#56423c",
+                        "outline": "#8a726b",
+                        "surface": "#fbf9f4",
+                        "on-primary-fixed": "#3a0b00",
+                        "tertiary-fixed-dim": "#e9c176",
+                        "on-primary": "#ffffff",
+                        "on-surface": "#1b1c19",
+                        "primary-container": "#a44322",
+                        "on-secondary-fixed-variant": "#364c3c",
+                        "secondary-fixed": "#d0e9d4",
+                        "on-primary-container": "#ffd4c7",
+                        "background": "#fbf9f4",
+                        "surface-container-highest": "#e4e2dd",
+                        "on-secondary": "#ffffff",
+                        "surface-bright": "#fbf9f4",
+                        "surface-container-lowest": "#ffffff",
+                        "inverse-primary": "#ffb59e",
+                        "on-error": "#ffffff",
+                        "on-tertiary-fixed": "#261900",
+                        "error-container": "#ffdad6",
+                        "tertiary-container": "#7b5d1c",
+                        "on-secondary-fixed": "#0b2013",
+                        "primary": "#842c0c",
+                        "on-secondary-container": "#516857",
+                        "outline-variant": "#ddc0b8",
+                        "error": "#ba1a1a",
+                        "on-error-container": "#93000a",
+                        "secondary-container": "#cde6d1",
+                        "tertiary-fixed": "#ffdea5"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "container-max": "1280px",
+                        "margin-desktop": "64px",
+                        "margin-mobile": "16px",
+                        "unit": "8px",
+                        "gutter": "24px"
+                    },
+                    "fontFamily": {
+                        "display-lg": ["Bodoni Moda"],
+                        "display-lg-mobile": ["Bodoni Moda"],
+                        "headline-sm": ["Bodoni Moda"],
+                        "body-md": ["Hanken Grotesk"],
+                        "label-ledger": ["Space Mono"],
+                        "headline-md": ["Bodoni Moda"],
+                        "body-lg": ["Hanken Grotesk"],
+                        "price-display": ["Space Mono"]
+                    },
+                    "fontSize": {
+                        "display-lg": ["64px", { "lineHeight": "72px", "letterSpacing": "-0.02em", "fontWeight": "600" }],
+                        "display-lg-mobile": ["40px", { "lineHeight": "48px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "headline-sm": ["24px", { "lineHeight": "32px", "fontWeight": "500" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "label-ledger": ["14px", { "lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "400" }],
+                        "headline-md": ["32px", { "lineHeight": "40px", "fontWeight": "500" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "price-display": ["20px", { "lineHeight": "24px", "fontWeight": "500" }]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body { background-color: theme('colors.background'); color: theme('colors.on-background'); }
+        .ledger-line { border-bottom: 1px solid theme('colors.secondary'); transition: border-color 0.3s ease; }
+        .ledger-line:focus-within { border-bottom-color: theme('colors.primary'); }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="antialiased font-body-md text-body-md overflow-x-hidden selection:bg-primary-container selection:text-on-primary-container">
+<!-- Top Navigation -->
+<nav class="fixed top-0 w-full z-50 flex justify-between items-center px-margin-mobile md:px-margin-desktop py-4 bg-surface/90 dark:bg-on-background/90 backdrop-blur-md border-b border-outline/10">
+<div class="flex items-center gap-4">
+<span class="font-display-lg text-display-lg-mobile md:text-display-lg text-primary dark:text-primary-fixed-dim tracking-tighter">Regale</span>
+</div>
+<div class="hidden md:flex items-center gap-8 font-label-ledger text-label-ledger">
+<a class="text-primary font-bold border-b-2 border-primary pb-1" href="#">Properties</a>
+<a class="text-on-surface-variant dark:text-surface-variant hover:text-primary transition-colors duration-300" href="#">Gallery</a>
+<a class="text-on-surface-variant dark:text-surface-variant hover:text-primary transition-colors duration-300" href="#">Offers</a>
+<a class="text-on-surface-variant dark:text-surface-variant hover:text-primary transition-colors duration-300" href="#">About</a>
+</div>
+<button class="bg-primary text-on-primary px-6 py-2 rounded font-label-ledger text-label-ledger uppercase tracking-wider hover:bg-primary-container hover:text-on-primary-container transition-colors duration-300 scale-95 transition-transform">Book Now</button>
+</nav>
+<!-- Main Content -->
+<main class="min-h-screen">
+<!-- Hero Section -->
+<section class="relative h-[921px] w-full flex items-center justify-center pt-20">
+<div class="absolute inset-0 z-0">
+<div class="absolute inset-0 bg-cover bg-center w-full h-full object-cover" data-alt="A sweeping, cinematic wide shot of a traditional wooden houseboat gently floating on the serene backwaters of Alleppey, Kerala. The early morning mist rolls over the glassy water, reflecting the soft, diffuse sunlight. Lush, dense green palm trees line the banks in the background. The scene exudes a sense of quiet luxury and peaceful isolation. The lighting is golden hour soft, casting long gentle shadows, perfectly capturing the Minimalist-Tactile boutique aesthetic of Regale Hotels." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAk6EmCOSxbMeL1PfUfK8ynVGKiKuO_CMUxG27XcxklX_HL1IvViLvol9NUNutY5hDxNSOwRCQ0f3jQOROAQJ02PMFFu6aYn8JOjfrSEjzGJEfna5f9SXzYioj5fNX1lCiR49CcMzoD3yMnmrZfuYrawe94GdOuOZH3oEqSjF8LysJYRiK1dCQfNvKibHPtLdkqp1j9baRalvqZQvrEIjQDZFur3ZtyrJJFTSYxf5oXE0mglO4P3ExT')"></div>
+<div class="absolute inset-0 bg-gradient-to-t from-on-background/80 via-on-background/20 to-transparent"></div>
+</div>
+<div class="relative z-10 w-full max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop flex flex-col items-center text-center">
+<h1 class="font-display-lg text-display-lg-mobile md:text-display-lg text-surface-bright mb-6 max-w-3xl">Sanctuaries of Serenity</h1>
+<p class="font-body-lg text-body-lg text-surface-variant mb-12 max-w-xl">Curated boutique properties offering an authentic, unhurried Indian editorial experience.</p>
+<div class="flex items-center gap-4 bg-surface/10 backdrop-blur-sm px-4 py-2 rounded-full border border-surface/20">
+<div class="flex -space-x-3">
+<img class="w-8 h-8 rounded-full border-2 border-surface object-cover" data-alt="A closely cropped, softly lit portrait of an elegant woman with a serene expression, looking slightly off-camera. The background is a soft, warm blur. The lighting is natural and flattering, evoking a sense of calm and sophistication, aligned with the high-end boutique hospitality aesthetic of the site." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDTUBEoxzjOgqH8wloAxKKxJX-T2u8xnRJIa_ReWdat55CR8yMW2YCRIBX54IAU7LAmeOzwZk0gBPc60NZHMVduo4_YvRJyIQURzFhH3mQc10uynLnDtQde6xJYnJtXztTxMy_669M5Wa1wHFUM81H91-2Bw_n4QdRxebrU2HS853NDLQM85duqVmMlQeoYk_-Z26UDuW34Xbn9hCpl4ZQhJES4MeyKWeGnZd3aFYs7iPTV1LzZ6Afc"/>
+<img class="w-8 h-8 rounded-full border-2 border-surface object-cover" data-alt="A portrait of a distinguished man with a gentle smile, captured in soft natural light. He is wearing a simple linen shirt. The background is a beautifully out-of-focus hint of architectural elements. The color palette relies on warm earth tones and soft whites." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDJBQkB1_DsyqWMAAgRncgPg0K47S1oLv62dDE9CggSwXZz4Hd1zGs9Bjr0KvK8BKYItEiUmQHx93VanEkjmL9bGVjEqdlhHPJeyXBCvFB3sHJzJykRKh124ahL9ha5BrnrKHdDbSNPQoplXtSdcD8bkfCJpITV5z1aKTNoUfyMC4cKmEyaIQD6SzXVDh0-Q6X_Vp9FD24MOcHodMwFgHvw6KL0FJlox_Kgum40P_VC0Fjhe_auG9_h"/>
+<img class="w-8 h-8 rounded-full border-2 border-surface object-cover" data-alt="A candid, warm portrait of a young couple laughing together. The lighting is soft and inviting, with a shallow depth of field that blurs the lush green background. The aesthetic is relaxed, authentic, and premium, fitting the travel journal style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCWtfzUFZ_aPi1g1VLdAu9ngZZ_K05xqet9cDAHoIYeL9qVO56FUvqJ4X-Gh5mKJiEBt6mKLArMiPxEJ8lYuWem5Ccb1FezwpSH1UlIEob2Lb6pqM3TvvJfH507CvstP6hFY-7mtKjZYs0CCGFfopoW-14aGoc2B_0TTLrmCd0TJYmFf3a2OoU4kRmwWegXRFPldLnwwHqMz-fE1nsAxtz5q574Vv_4vAEFIfBwetjX5iIFtzIcRJXk"/>
+</div>
+<span class="font-label-ledger text-label-ledger text-surface-bright">4.8★ from 2,340 direct guests</span>
+</div>
+</div>
+<!-- Floating Search Card -->
+<div class="absolute bottom-0 translate-y-1/2 w-full max-w-4xl mx-auto px-margin-mobile md:px-0 z-20">
+<div class="bg-surface p-6 shadow-[4px_4px_0px_rgba(27,48,34,0.05)] border border-outline/10 flex flex-col md:flex-row gap-6 items-end">
+<div class="w-full md:w-1/3 flex flex-col gap-2 ledger-line pb-2 relative">
+<label class="font-label-ledger text-label-ledger text-on-surface-variant uppercase text-xs">Destination</label>
+<div class="flex items-center gap-2 text-on-surface">
+<span class="material-symbols-outlined text-secondary" style="font-variation-settings: 'FILL' 0;">location_on</span>
+<input class="w-full bg-transparent border-none p-0 focus:ring-0 font-body-md text-body-md placeholder:text-outline-variant" placeholder="Where to?" type="text"/>
+</div>
+</div>
+<div class="w-full md:w-1/3 flex flex-col gap-2 ledger-line pb-2">
+<label class="font-label-ledger text-label-ledger text-on-surface-variant uppercase text-xs">Dates</label>
+<div class="flex items-center gap-2 text-on-surface">
+<span class="material-symbols-outlined text-secondary" style="font-variation-settings: 'FILL' 0;">calendar_month</span>
+<input class="w-full bg-transparent border-none p-0 focus:ring-0 font-body-md text-body-md placeholder:text-outline-variant" placeholder="Check in - Check out" type="text"/>
+</div>
+</div>
+<div class="w-full md:w-1/4 flex flex-col gap-2 ledger-line pb-2">
+<label class="font-label-ledger text-label-ledger text-on-surface-variant uppercase text-xs">Guests</label>
+<div class="flex items-center gap-2 text-on-surface">
+<span class="material-symbols-outlined text-secondary" style="font-variation-settings: 'FILL' 0;">group</span>
+<input class="w-full bg-transparent border-none p-0 focus:ring-0 font-body-md text-body-md placeholder:text-outline-variant" placeholder="2 Guests, 1 Room" type="text"/>
+</div>
+</div>
+<button class="w-full md:w-auto bg-primary text-on-primary px-8 py-3 font-label-ledger text-label-ledger uppercase tracking-wider hover:bg-primary-container hover:text-on-primary-container transition-colors h-[48px] rounded flex items-center justify-center">Search</button>
+</div>
+</div>
+</section>
+<div class="h-32 md:h-24"></div> <!-- Spacer for floating card -->
+<!-- Property Collection -->
+<section class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-24">
+<div class="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
+<div>
+<h2 class="font-headline-md text-headline-md text-on-background mb-2">The Collection</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">Carefully restored heritage homes and intimate nature retreats.</p>
+</div>
+<div class="flex gap-4 overflow-x-auto hide-scrollbar w-full md:w-auto pb-2">
+<button class="bg-[#F2E8D5] text-secondary px-4 py-1.5 rounded-full font-label-ledger text-label-ledger whitespace-nowrap">All</button>
+<button class="bg-transparent border border-outline-variant text-on-surface-variant hover:border-secondary px-4 py-1.5 rounded-full font-label-ledger text-label-ledger whitespace-nowrap transition-colors">Kerala</button>
+<button class="bg-transparent border border-outline-variant text-on-surface-variant hover:border-secondary px-4 py-1.5 rounded-full font-label-ledger text-label-ledger whitespace-nowrap transition-colors">North India</button>
+<button class="bg-transparent border border-outline-variant text-on-surface-variant hover:border-secondary px-4 py-1.5 rounded-full font-label-ledger text-label-ledger whitespace-nowrap transition-colors">Goa</button>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-gutter">
+<!-- Property Card 1 -->
+<div class="group cursor-pointer border border-[#8a726b]/10 hover:border-[#8a726b]/30 transition-colors bg-surface-container-lowest">
+<div class="relative h-64 overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" data-alt="A tranquil view of a wooden boat gliding through a narrow canal in Alleppey, lined with dense, vibrant green foliage. The water reflects the overcast, soft white sky above. The scene captures the peaceful, unhurried pace of Kerala's backwaters in a minimalist, high-end travel photography style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCgrtkDFA8wpunJIf_o1drN6FaSlwB2DVTF0W5sFttfRlD_OCF5-SOXvlm1HPRztIPmABl8NfXhdMCQ5XTqXVyqg1cEjEr9bEq2AYvAFJeTc7AQvd8Y0cb2VhOZjbOHwweVMZBAglYydTjOd0slnoZ_0zUgQ0px6cCLlrODK1eRqThWwXzv3oqJ8FjRGMH9QTSWjEOHpZ8xYH_TEmg7qTyfRTmPOJRHiT0H4M6AJWCi2fDq7B1vDtoe"/>
+<div class="absolute top-4 left-4 flex gap-2">
+<span class="bg-[#F2E8D5] text-secondary px-2 py-1 text-xs font-label-ledger rounded-sm">Backwaters</span>
+</div>
+</div>
+<div class="p-6">
+<h3 class="font-headline-sm text-headline-sm text-on-background mb-2">The Alleppey Ledger</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-6 line-clamp-2">A restored spice merchant's home on the banks of Lake Vembanad.</p>
+<div class="flex justify-between items-end border-t border-outline/10 pt-4">
+<div class="flex flex-col">
+<span class="font-label-ledger text-label-ledger text-on-surface-variant text-xs uppercase mb-1">From</span>
+<span class="font-price-display text-price-display text-on-background">₹8,500</span>
+</div>
+<div class="flex items-center gap-1 text-on-surface-variant">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="font-label-ledger text-label-ledger text-sm">4.9</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Property Card 2 -->
+<div class="group cursor-pointer border border-[#8a726b]/10 hover:border-[#8a726b]/30 transition-colors bg-surface-container-lowest">
+<div class="relative h-64 overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" data-alt="A breathtaking view of rolling tea estates in Munnar, partially obscured by morning mist. The meticulously manicured green slopes create rhythmic, organic patterns across the landscape. The light is diffused and cool, highlighting the fresh, tactile nature of the hills in a sophisticated, minimalist photographic approach." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC6nxX0NBg11sCWdsNXtjQVrK52khPBXBC_aJawVzuPP6Biw4OiEMuJL3G39OfHUfDxcz3f6okOcYwZ91QfsGMm-TrL6fb3f-yYqGilqrQK190Iy-VtdIKJwkEL9j9AONu6ZW-rneZoh0c_TpTj01agfGEDCSFRcmaE-sGV7FqCBv_FVuYW8G-deN5VWgXuebB43JZdTxnxx7Ez3NhTsXbOcYalgC6dZOdMSEnkhSGGNoi3X6jTJDHd"/>
+<div class="absolute top-4 left-4 flex gap-2">
+<span class="bg-[#F2E8D5] text-secondary px-2 py-1 text-xs font-label-ledger rounded-sm">Hills</span>
+</div>
+</div>
+<div class="p-6">
+<h3 class="font-headline-sm text-headline-sm text-on-background mb-2">Munnar Estate</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-6 line-clamp-2">Perched among rolling tea gardens, offering cool mountain air and silence.</p>
+<div class="flex justify-between items-end border-t border-outline/10 pt-4">
+<div class="flex flex-col">
+<span class="font-label-ledger text-label-ledger text-on-surface-variant text-xs uppercase mb-1">From</span>
+<span class="font-price-display text-price-display text-on-background">₹12,000</span>
+</div>
+<div class="flex items-center gap-1 text-on-surface-variant">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="font-label-ledger text-label-ledger text-sm">4.8</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Property Card 3 -->
+<div class="group cursor-pointer border border-[#8a726b]/10 hover:border-[#8a726b]/30 transition-colors bg-surface-container-lowest">
+<div class="relative h-64 overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" data-alt="An interior shot of a meticulously restored colonial-era room in Delhi. High ceilings, exposed wooden beams, and arched doorways frame a minimalist four-poster bed. The lighting is warm and cinematic, casting elegant shadows that emphasize the rich textures of the limestone walls and dark wood furniture." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBdQDvONBwoPAXkrNXi1vccKDbhp2TqZJMmV1y1Of1Umt_e7FOBPqOskZbUVlacKTqeh8PPvKR6MNU4q7yLy0obFAMwHWF8kueCnox4WOuMWcU52Nh7YQUdXd9ZQXsGRsqhzJu9CYrPZo67pbh-L2aebbTD2ARWC_NgjszUj6zfQ-eonlxvDyZXygZkwW5Jf_H9SRKjsqz4iVqZPmJLuOHWweCsJsJA7tU9jVqg-ZVnC53pWyF-DS7x"/>
+<div class="absolute top-4 left-4 flex gap-2">
+<span class="bg-[#F2E8D5] text-secondary px-2 py-1 text-xs font-label-ledger rounded-sm">Heritage</span>
+</div>
+</div>
+<div class="p-6">
+<h3 class="font-headline-sm text-headline-sm text-on-background mb-2">Lutyens' Haven</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-6 line-clamp-2">A quiet, architectural gem tucked away in the heart of historic New Delhi.</p>
+<div class="flex justify-between items-end border-t border-outline/10 pt-4">
+<div class="flex flex-col">
+<span class="font-label-ledger text-label-ledger text-on-surface-variant text-xs uppercase mb-1">From</span>
+<span class="font-price-display text-price-display text-on-background">₹15,500</span>
+</div>
+<div class="flex items-center gap-1 text-on-surface-variant">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="font-label-ledger text-label-ledger text-sm">4.7</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Property Card 4 -->
+<div class="group cursor-pointer border border-[#8a726b]/10 hover:border-[#8a726b]/30 transition-colors bg-surface-container-lowest">
+<div class="relative h-64 overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" data-alt="A serene, minimalist view of a secluded Goan courtyard. A small, pristine swimming pool sits under the shade of a massive banyan tree. The surrounding walls are painted in a soft, sun-bleached terracotta. The sunlight dapples through the leaves, creating a calm, tactile atmosphere typical of a luxury boutique retreat." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBvApowZ86A7hdu7XHDVq6tGhlMx9gRL_aHxzCkFR0hIkbGbBOCZG_YVjd_PhvRWqXAsbz_y6GDBVT416OSjqhm52sQ0eap1nhvMdBZBVlac0DYKaHpPMdrYBYI2fsJs70k0uw649kr86wG7nXbd6lIGLOE0vsnEXOccbmPZLWg-Y1FijoheVScC-pG9xjy4gdZkhPZkliFcl9lyUrhg2LuU4kPoMgSr2-UxvqCiNq8_IxsGEHgJeHV"/>
+<div class="absolute top-4 left-4 flex gap-2">
+<span class="bg-[#F2E8D5] text-secondary px-2 py-1 text-xs font-label-ledger rounded-sm">Coastal</span>
+</div>
+</div>
+<div class="p-6">
+<h3 class="font-headline-sm text-headline-sm text-on-background mb-2">Assagao Villa</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-6 line-clamp-2">A restored Portuguese villa offering laid-back luxury in North Goa.</p>
+<div class="flex justify-between items-end border-t border-outline/10 pt-4">
+<div class="flex flex-col">
+<span class="font-label-ledger text-label-ledger text-on-surface-variant text-xs uppercase mb-1">From</span>
+<span class="font-price-display text-price-display text-on-background">₹18,000</span>
+</div>
+<div class="flex items-center gap-1 text-on-surface-variant">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="font-label-ledger text-label-ledger text-sm">4.9</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Why Book Direct -->
+<section class="bg-surface-container-low py-24 border-y border-outline/10">
+<div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop text-center">
+<h2 class="font-headline-md text-headline-md text-on-background mb-16">The Direct Advantage</h2>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-gutter">
+<div class="flex flex-col items-center">
+<div class="w-16 h-16 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center mb-6">
+<span class="material-symbols-outlined text-3xl" style="font-variation-settings: 'FILL' 0;">payments</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-background mb-3">Best Rate Guarantee</h3>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-xs text-center">We promise the lowest available price when you book directly with our properties.</p>
+</div>
+<div class="flex flex-col items-center">
+<div class="w-16 h-16 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center mb-6">
+<span class="material-symbols-outlined text-3xl" style="font-variation-settings: 'FILL' 0;">chat</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-background mb-3">Direct WhatsApp Concierge</h3>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-xs text-center">Plan your stay, request amenities, or ask questions directly to our on-site team.</p>
+</div>
+<div class="flex flex-col items-center">
+<div class="w-16 h-16 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center mb-6">
+<span class="material-symbols-outlined text-3xl" style="font-variation-settings: 'FILL' 0;">edit_calendar</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-background mb-3">Flexible Changes</h3>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-xs text-center">Life happens. Enjoy complimentary date modifications up to 7 days before arrival.</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Testimonials -->
+<section class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-24">
+<h2 class="font-headline-md text-headline-md text-on-background mb-16 text-center">From The Guest Ledger</h2>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
+<div class="bg-surface p-8 border border-outline/10 hover:shadow-[4px_4px_0px_rgba(27,48,34,0.05)] transition-shadow">
+<div class="flex text-tertiary mb-6">
+<span class="material-symbols-outlined text-lg" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-lg" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-lg" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-lg" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-lg" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+<p class="font-body-md text-body-md text-on-background mb-8 italic">"A masterclass in understated luxury. The attention to detail in the architecture and the warmth of the staff made our stay unforgettable."</p>
+<div class="border-t border-outline/20 pt-4">
+<p class="font-label-ledger text-label-ledger text-on-surface-variant">Sarah Jenkins</p>
+<p class="font-label-ledger text-label-ledger text-outline text-xs mt-1">London • Stayed at Assagao Villa</p>
+</div>
+</div>
+<div class="bg-surface p-8 border border-outline/10 hover:shadow-[4px_4px_0px_rgba(27,48,34,0.05)] transition-shadow">
+<div class="flex text-tertiary mb-6">
+<span class="material-symbols-outlined text-lg" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-lg" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-lg" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-lg" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-lg" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+<p class="font-body-md text-body-md text-on-background mb-8 italic">"The Alleppey Ledger is a rare find. It feels less like a hotel and more like being invited to a beautiful, historic private home."</p>
+<div class="border-t border-outline/20 pt-4">
+<p class="font-label-ledger text-label-ledger text-on-surface-variant">Arjun Mehta</p>
+<p class="font-label-ledger text-label-ledger text-outline text-xs mt-1">Mumbai • Stayed at The Alleppey Ledger</p>
+</div>
+</div>
+<div class="bg-surface p-8 border border-outline/10 hover:shadow-[4px_4px_0px_rgba(27,48,34,0.05)] transition-shadow">
+<div class="flex text-tertiary mb-6">
+<span class="material-symbols-outlined text-lg" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-lg" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-lg" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-lg" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-lg" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+<p class="font-body-md text-body-md text-on-background mb-8 italic">"Waking up to the mist over the tea estates in Munnar was magical. The minimalist design perfectly complements the dramatic landscape."</p>
+<div class="border-t border-outline/20 pt-4">
+<p class="font-label-ledger text-label-ledger text-on-surface-variant">Elena Rossi</p>
+<p class="font-label-ledger text-label-ledger text-outline text-xs mt-1">Milan • Stayed at Munnar Estate</p>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-surface-container-highest dark:bg-on-background w-full px-margin-mobile md:px-margin-desktop py-16 grid grid-cols-1 md:grid-cols-4 gap-gutter">
+<div class="md:col-span-1 flex flex-col items-start gap-4">
+<span class="font-display-lg text-headline-md text-primary dark:text-primary-fixed-dim">Regale</span>
+<p class="font-body-md text-body-md text-on-surface dark:text-surface-variant opacity-80 hover:opacity-100 mt-4">© 2024 Regale Hotels &amp; Resorts. Inspired by the New Indian Editorial.</p>
+</div>
+<div class="md:col-span-3 flex flex-wrap gap-8 md:gap-16 justify-start md:justify-end font-label-ledger text-label-ledger">
+<a class="text-on-surface-variant hover:text-primary transition-colors" href="#">Privacy Policy</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors" href="#">Terms of Service</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors" href="#">Sustainability</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors" href="#">Careers</a>
+</div>
+</footer>
+<!-- Persistent WhatsApp Button -->
+<a class="fixed bottom-6 right-6 z-50 bg-[#25D366] text-white w-14 h-14 rounded-full flex items-center justify-center shadow-[4px_4px_0px_rgba(27,48,34,0.2)] hover:-translate-y-1 transition-transform duration-300" href="#">
+<span class="material-symbols-outlined text-3xl" style="font-variation-settings: 'FILL' 1;">forum</span>
+</a>
+</body></html>

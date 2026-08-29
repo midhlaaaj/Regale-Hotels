@@ -1,0 +1,22 @@
+# --- secrets ---
+.env
+.env.*
+!.env.example
+
+# --- Python (backend) ---
+backend/.venv/
+**/__pycache__/
+*.pyc
+
+# --- Node (frontend, admin) ---
+node_modules/
+.nuxt/
+.output/
+.data/
+dist/
+*.log
+npm-debug.log*
+
+# --- OS / editor ---
+.DS_Store
+Thumbs.db

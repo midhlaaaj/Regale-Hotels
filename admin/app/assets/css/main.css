@@ -1,0 +1,59 @@
+body {
+  margin: 0;
+  background: #f5f3ee;
+  color: #1b1c19;
+  -webkit-font-smoothing: antialiased;
+}
+* {
+  box-sizing: border-box;
+}
+a {
+  color: #842c0c;
+  text-decoration: none;
+}
+input,
+button,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+input:focus,
+select:focus {
+  outline: none;
+}
+.material-symbols-outlined {
+  font-family: "Material Symbols Outlined";
+  font-weight: normal;
+  font-style: normal;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  -webkit-font-feature-settings: "liga";
+  -webkit-font-smoothing: antialiased;
+}
+
+.skeleton {
+  background: linear-gradient(100deg, #eae8e3 30%, #f6f4ef 50%, #eae8e3 70%);
+  background-size: 300% 100%;
+  animation: skeleton-shimmer 1.6s ease-in-out infinite;
+  border-radius: 2px;
+}
+@keyframes skeleton-shimmer {
+  0% {
+    background-position: 120% 0;
+  }
+  100% {
+    background-position: -20% 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .skeleton {
+    animation: none;
+    background: #eae8e3;
+  }
+}

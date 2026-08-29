@@ -1,0 +1,1167 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900&family=Hanken+Grotesk:ital,wght@0,100..900&family=Space+Mono:ital,wght@0,400;0,700&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+<style>
+  body { margin: 0; background: #f5f3ee; color: #1b1c19; font-family: 'Hanken Grotesk', system-ui, sans-serif; font-size: 15px; line-height: 22px; -webkit-font-smoothing: antialiased; }
+  * { box-sizing: border-box; }
+  ::selection { background: #ffd4c7; color: #842c0c; }
+  a { color: #842c0c; text-decoration: none; }
+  a:hover { color: #a44322; }
+  input, button, select, textarea { font: inherit; color: inherit; }
+  input:focus, select:focus { outline: none; }
+  .material-symbols-outlined { font-family: 'Material Symbols Outlined'; font-weight: normal; font-style: normal; line-height: 1; letter-spacing: normal; text-transform: none; display: inline-block; white-space: nowrap; word-wrap: normal; direction: ltr; -webkit-font-feature-settings: 'liga'; -webkit-font-smoothing: antialiased; }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; } }
+</style>
+</helmet>
+
+<div style="min-height: 100vh; background: #f5f3ee;">
+
+<sc-if value="{{ showPager }}" hint-placeholder-val="{{ true }}">
+<div style="position: fixed; top: 0; left: 0; right: 0; z-index: 90; background: #1B3022; height: 36px; display: flex; align-items: center; padding: 0 12px; overflow-x: auto;">
+  <span style="font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: #C5A059; padding-right: 14px; white-space: nowrap;">Regale Admin · {{ roleTag }}</span>
+  <sc-for list="{{ pages }}" as="p" hint-placeholder-count="8">
+    <button onClick="{{ p.go }}" style="background: transparent; border: none; cursor: pointer; padding: 0 10px; height: 36px; font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; white-space: nowrap;">
+      <sc-if value="{{ p.active }}" hint-placeholder-val="{{ false }}"><span style="color: #ffffff; border-bottom: 2px solid #C5A059; padding-bottom: 9px;">{{ p.label }}</span></sc-if>
+      <sc-if value="{{ p.idle }}" hint-placeholder-val="{{ true }}"><span style="color: #cfd8d0;" style-hover="color: #ffffff;">{{ p.label }}</span></sc-if>
+    </button>
+  </sc-for>
+</div>
+</sc-if>
+
+<!-- ================= LOGIN ================= -->
+<sc-if value="{{ pLogin }}" hint-placeholder-val="{{ true }}">
+<div style="padding-top: 36px; min-height: 100vh; display: flex; align-items: stretch; background: #fbf9f4;">
+  <div style="width: 34%; min-width: 0; background: #1B3022; position: relative; display: flex; flex-direction: column; justify-content: space-between; padding: clamp(28px, 3vw, 44px);">
+    <div>
+      <p style="font-family: 'Bodoni Moda', serif; font-size: 34px; font-weight: 600; color: #fbf9f4; margin: 0;">Regale</p>
+      <p style="font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: #C5A059; margin: 6px 0 0;">Operations</p>
+    </div>
+    <div>
+      <p style="font-family: 'Bodoni Moda', serif; font-size: clamp(20px, 2vw, 26px); font-weight: 400; font-style: italic; line-height: 1.4; color: #e4e2dd; margin: 0 0 20px; max-width: 22ch;">Four houses. One ledger.</p>
+      <p style="font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: #8fa896; margin: 0;">Alleppey · Munnar · Delhi · Goa</p>
+    </div>
+  </div>
+
+  <div style="flex: 1; min-width: 0; display: flex; align-items: center; justify-content: center; padding: clamp(32px, 5vw, 64px) clamp(20px, 5vw, 48px);">
+    <div style="width: 100%; max-width: 372px;">
+      <h1 style="font-family: 'Bodoni Moda', serif; font-size: clamp(28px, 3.4vw, 36px); font-weight: 600; letter-spacing: -0.02em; line-height: 1.15; color: #1b1c19; margin: 0 0 10px;">Sign in</h1>
+      <p style="font-family: 'Hanken Grotesk', sans-serif; font-size: 15px; line-height: 23px; color: #56423c; margin: 0 0 40px;">Your access is scoped to your role.</p>
+
+      <div style="display: flex; flex-direction: column; gap: 28px;">
+        <div style="display: flex; flex-direction: column; gap: 7px;">
+          <label style="font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: #8a726b;">Work email</label>
+          <input value="s.varma@regale.in" style="width: 100%; background: transparent; border: none; border-bottom: 1px solid #4d6453; padding: 8px 0; font-family: 'Hanken Grotesk', sans-serif; font-size: 16px; color: #1b1c19; min-height: 42px;" style-focus="border-bottom-color: #842c0c;" />
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 7px;">
+          <div style="display: flex; justify-content: space-between; align-items: baseline; gap: 10px;">
+            <label style="font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: #8a726b;">Password</label>
+            <a href="#" style="font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: #842c0c;">Forgot</a>
+          </div>
+          <input type="password" value="mangosteen" style="width: 100%; background: transparent; border: none; border-bottom: 1px solid #4d6453; padding: 8px 0; font-family: 'Space Mono', monospace; font-size: 16px; letter-spacing: 0.24em; color: #1b1c19; min-height: 42px;" style-focus="border-bottom-color: #842c0c;" />
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 9px;">
+          <label style="font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: #8a726b;">Signing in as</label>
+          <div style="display: flex; border: 1px solid rgba(138,114,107,0.3); border-radius: 2px; overflow: hidden;">
+            <sc-for list="{{ roleChips }}" as="c" hint-placeholder-count="2">
+              <button onClick="{{ c.go }}" style="flex: 1; background: transparent; border: none; cursor: pointer; padding: 0;">
+                <sc-if value="{{ c.active }}" hint-placeholder-val="{{ true }}"><span style="display: block; padding: 11px 8px; background: #1B3022; color: #fbf9f4; font-family: 'Space Mono', monospace; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase;">{{ c.label }}</span></sc-if>
+                <sc-if value="{{ c.idle }}" hint-placeholder-val="{{ false }}"><span style="display: block; padding: 11px 8px; background: transparent; color: #56423c; font-family: 'Space Mono', monospace; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase;" style-hover="background: #f0eee9;">{{ c.label }}</span></sc-if>
+              </button>
+            </sc-for>
+          </div>
+          <p style="font-family: 'Hanken Grotesk', sans-serif; font-size: 13px; color: #8a726b; margin: 0;">{{ roleHint }}</p>
+        </div>
+
+        <button onClick="{{ go.dashboard }}" style="width: 100%; background: #842c0c; color: #ffffff; border: none; cursor: pointer; padding: 16px; border-radius: 2px; font-family: 'Space Mono', monospace; font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; min-height: 52px;" style-hover="background: #a44322;">Sign in</button>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px; border-top: 1px solid rgba(138,114,107,0.18); padding-top: 18px;">
+          <button onClick="{{ toggleRemember }}" style="display: flex; align-items: center; gap: 9px; background: transparent; border: none; cursor: pointer; padding: 0;">
+            <sc-if value="{{ remembered }}" hint-placeholder-val="{{ false }}"><span style="width: 16px; height: 16px; background: #842c0c; color: #ffffff; border-radius: 2px; font-family: 'Space Mono', monospace; font-size: 11px; line-height: 16px; text-align: center;">✓</span></sc-if>
+            <sc-if value="{{ notRemembered }}" hint-placeholder-val="{{ true }}"><span style="width: 16px; height: 16px; border: 1px solid #8a726b; border-radius: 2px;"></span></sc-if>
+            <span style="font-family: 'Hanken Grotesk', sans-serif; font-size: 13px; color: #56423c;">Keep me signed in</span>
+          </button>
+          <span style="font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 0.08em; color: #8a726b;">v4.2</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</sc-if>
+
+<!-- ================= APP SHELL ================= -->
+<sc-if value="{{ inApp }}" hint-placeholder-val="{{ false }}">
+<div style="padding-top: 36px; display: flex; align-items: stretch; min-height: 100vh;">
+
+  <aside style="width: 228px; flex: 0 0 228px; background: #fbf9f4; border-right: 1px solid rgba(138,114,107,0.22); padding: 20px 0; display: flex; flex-direction: column; position: sticky; top: 36px; height: calc(100vh - 36px);">
+    <div style="padding: 0 18px 16px; border-bottom: 1px solid rgba(138,114,107,0.15);">
+      <p style="font-family: 'Bodoni Moda', serif; font-size: 24px; font-weight: 600; color: #842c0c; margin: 0;">Regale</p>
+      <sc-if value="{{ isSuper }}" hint-placeholder-val="{{ true }}"><p style="font-family: 'Space Mono', monospace; font-size: 9px; letter-spacing: 0.16em; text-transform: uppercase; color: #8a726b; margin: 4px 0 0;">Group operations</p></sc-if>
+      <sc-if value="{{ isManager }}" hint-placeholder-val="{{ false }}"><p style="font-family: 'Space Mono', monospace; font-size: 9px; letter-spacing: 0.16em; text-transform: uppercase; color: #4d6453; margin: 4px 0 0;">House desk · Alleppey</p></sc-if>
+    </div>
+    <nav style="display: flex; flex-direction: column; padding: 12px 8px; gap: 1px; flex: 1; overflow-y: auto;">
+      <sc-for list="{{ sideNav }}" as="n" hint-placeholder-count="7">
+        <div>
+          <sc-if value="{{ n.isHeading }}" hint-placeholder-val="{{ false }}">
+            <p style="font-family: 'Space Mono', monospace; font-size: 9px; letter-spacing: 0.16em; text-transform: uppercase; color: #b0a49c; margin: 16px 0 6px; padding: 0 12px;">{{ n.label }}</p>
+          </sc-if>
+          <sc-if value="{{ n.isItem }}" hint-placeholder-val="{{ true }}">
+            <button onClick="{{ n.go }}" style="background: transparent; border: none; cursor: pointer; padding: 0; text-align: left; width: 100%;">
+              <sc-if value="{{ n.on }}" hint-placeholder-val="{{ false }}">
+                <span style="display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-radius: 2px; background: #F2E8D5; color: #1B3022; font-family: 'Space Mono', monospace; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; border-left: 2px solid #842c0c;"><span class="material-symbols-outlined" style="font-size: 17px;">{{ n.icon }}</span>{{ n.label }}</span>
+              </sc-if>
+              <sc-if value="{{ n.off }}" hint-placeholder-val="{{ true }}">
+                <span style="display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-radius: 2px; color: #56423c; font-family: 'Space Mono', monospace; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; border-left: 2px solid transparent;" style-hover="background: #f0eee9; color: #1B3022;"><span class="material-symbols-outlined" style="font-size: 17px;">{{ n.icon }}</span>{{ n.label }}</span>
+              </sc-if>
+            </button>
+          </sc-if>
+        </div>
+      </sc-for>
+    </nav>
+    <div style="padding: 14px 18px 0; border-top: 1px solid rgba(138,114,107,0.15);">
+      <p style="font-family: 'Space Mono', monospace; font-size: 11px; color: #1b1c19; margin: 0;">{{ userName }}</p>
+      <p style="font-family: 'Space Mono', monospace; font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; color: #8a726b; margin: 4px 0 10px;">{{ userRole }}</p>
+      <button onClick="{{ go.login }}" style="background: transparent; border: 1px solid rgba(138,114,107,0.3); cursor: pointer; padding: 7px 11px; border-radius: 2px; font-family: 'Space Mono', monospace; font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; color: #56423c;" style-hover="border-color: #842c0c; color: #842c0c;">Sign out</button>
+    </div>
+  </aside>
+
+  <div style="flex: 1; min-width: 0; display: flex; flex-direction: column;">
+
+    <!-- top bar: super gets a scope switcher, manager gets a shift strip -->
+    <header style="background: #fbf9f4; border-bottom: 1px solid rgba(138,114,107,0.22); padding: 10px clamp(16px, 2.5vw, 28px); display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; position: sticky; top: 36px; z-index: 40;">
+      <sc-if value="{{ isSuper }}" hint-placeholder-val="{{ true }}">
+        <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+          <span style="font-family: 'Space Mono', monospace; font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase; color: #8a726b;">Scope</span>
+          <div style="display: flex; border: 1px solid rgba(138,114,107,0.25); border-radius: 2px; overflow: hidden; flex-wrap: wrap;">
+            <sc-for list="{{ propSwitcher }}" as="p" hint-placeholder-count="5">
+              <button onClick="{{ p.go }}" style="background: transparent; border: none; cursor: pointer; padding: 0; border-right: 1px solid rgba(138,114,107,0.18);">
+                <sc-if value="{{ p.on }}" hint-placeholder-val="{{ false }}"><span style="display: block; padding: 8px 12px; background: #1B3022; color: #fbf9f4; font-family: 'Space Mono', monospace; font-size: 11px; white-space: nowrap;">{{ p.label }}</span></sc-if>
+                <sc-if value="{{ p.off }}" hint-placeholder-val="{{ true }}"><span style="display: block; padding: 8px 12px; color: #56423c; font-family: 'Space Mono', monospace; font-size: 11px; white-space: nowrap;" style-hover="background: #f0eee9;">{{ p.label }}</span></sc-if>
+              </button>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+      <sc-if value="{{ isManager }}" hint-placeholder-val="{{ false }}">
+        <div style="display: flex; align-items: center; gap: 16px; flex-wrap: wrap;">
+          <div style="display: flex; align-items: center; gap: 8px; background: #1B3022; padding: 8px 12px; border-radius: 2px;">
+            <span class="material-symbols-outlined" style="font-size: 15px; color: #C5A059;">place</span>
+            <span style="font-family: 'Space Mono', monospace; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: #fbf9f4;">The Alleppey Ledger</span>
+          </div>
+          <sc-for list="{{ shiftStrip }}" as="t" hint-placeholder-count="3">
+            <div style="display: flex; align-items: baseline; gap: 6px;">
+              <span style="font-family: 'Space Mono', monospace; font-size: 15px; font-weight: 700; color: #1b1c19;">{{ t.v }}</span>
+              <span style="font-family: 'Space Mono', monospace; font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; color: #8a726b;">{{ t.k }}</span>
+            </div>
+          </sc-for>
+        </div>
+      </sc-if>
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <span style="font-family: 'Space Mono', monospace; font-size: 10px; color: #8a726b;">FRI 28 AUG · 11:42 IST</span>
+        <button style="background: transparent; border: 1px solid rgba(138,114,107,0.25); cursor: pointer; width: 34px; height: 34px; border-radius: 2px; color: #4d6453; display: flex; align-items: center; justify-content: center; position: relative;">
+          <span class="material-symbols-outlined" style="font-size: 18px;">notifications</span>
+          <span style="position: absolute; top: -5px; right: -5px; background: #842c0c; color: #ffffff; font-family: 'Space Mono', monospace; font-size: 9px; width: 15px; height: 15px; border-radius: 50%; line-height: 15px; text-align: center;">3</span>
+        </button>
+        <button style="background: #1B3022; color: #fbf9f4; border: none; cursor: pointer; height: 34px; padding: 0 13px; border-radius: 2px; font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase;">{{ primaryAction }}</button>
+      </div>
+    </header>
+
+    <!-- ============ DASHBOARD ============ -->
+    <sc-if value="{{ pDashboard }}" hint-placeholder-val="{{ true }}">
+    <div style="padding: clamp(18px, 2.5vw, 26px);">
+      <div style="display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end; justify-content: space-between; margin-bottom: 18px;">
+        <div>
+          <h1 style="font-family: 'Bodoni Moda', serif; font-size: clamp(25px, 3.2vw, 32px); font-weight: 500; color: #1b1c19; margin: 0 0 4px;">{{ dashTitle }}</h1>
+          <p style="font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: #8a726b; margin: 0;">{{ dashSub }}</p>
+        </div>
+        <sc-if value="{{ isSuper }}" hint-placeholder-val="{{ true }}">
+          <div style="display: flex; gap: 5px;">
+            <sc-for list="{{ periodChips }}" as="c" hint-placeholder-count="3">
+              <button onClick="{{ c.go }}" style="cursor: pointer; padding: 0; background: transparent; border: none;">
+                <sc-if value="{{ c.active }}" hint-placeholder-val="{{ false }}"><span style="display: block; padding: 7px 12px; border-radius: 2px; background: #1B3022; color: #fbf9f4; font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase;">{{ c.label }}</span></sc-if>
+                <sc-if value="{{ c.idle }}" hint-placeholder-val="{{ true }}"><span style="display: block; padding: 7px 12px; border-radius: 2px; border: 1px solid rgba(138,114,107,0.25); color: #56423c; font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase;" style-hover="border-color: #4d6453;">{{ c.label }}</span></sc-if>
+              </button>
+            </sc-for>
+          </div>
+        </sc-if>
+      </div>
+
+      <div style="display: flex; flex-wrap: wrap; background: #fbf9f4; border: 1px solid rgba(138,114,107,0.22); overflow: hidden;">
+        <sc-for list="{{ kpis }}" as="k" hint-placeholder-count="5">
+          <div style="flex: 1 1 186px; min-width: 0; background: #fbf9f4; padding: 16px; box-shadow: 1px 0 0 rgba(138,114,107,0.22), 0 1px 0 rgba(138,114,107,0.22);">
+            <p style="font-family: 'Space Mono', monospace; font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase; color: #8a726b; margin: 0 0 11px;">{{ k.label }}</p>
+            <p style="font-family: 'Space Mono', monospace; font-size: clamp(22px, 2.4vw, 28px); font-weight: 700; letter-spacing: -0.01em; color: #1b1c19; margin: 0 0 9px;">{{ k.value }}</p>
+            <div style="display: flex; align-items: center; gap: 7px; flex-wrap: wrap;">
+              <sc-if value="{{ k.up }}" hint-placeholder-val="{{ true }}"><span style="font-family: 'Space Mono', monospace; font-size: 10px; color: #4d6453;">▲ {{ k.delta }}</span></sc-if>
+              <sc-if value="{{ k.down }}" hint-placeholder-val="{{ false }}"><span style="font-family: 'Space Mono', monospace; font-size: 10px; color: #ba1a1a;">▼ {{ k.delta }}</span></sc-if>
+              <sc-if value="{{ k.flat }}" hint-placeholder-val="{{ false }}"><span style="font-family: 'Space Mono', monospace; font-size: 10px; color: #8a726b;">— {{ k.delta }}</span></sc-if>
+              <span style="font-family: 'Space Mono', monospace; font-size: 9px; color: #8a726b;">{{ k.note }}</span>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+
+      <!-- MANAGER: today's sheet leads -->
+      <sc-if value="{{ isManager }}" hint-placeholder-val="{{ false }}">
+      <div style="border: 1px solid rgba(138,114,107,0.22); background: #fbf9f4; margin-top: 20px;">
+        <div style="padding: 14px 18px; border-bottom: 1px solid rgba(138,114,107,0.18); display: flex; justify-content: space-between; align-items: center; gap: 10px;">
+          <p style="font-family: 'Space Mono', monospace; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: #1b1c19; margin: 0;">Today's sheet · 9 keys</p>
+          <span style="font-family: 'Space Mono', monospace; font-size: 10px; color: #8a726b;">Housekeeping cut-off 12:00</span>
+        </div>
+        <div style="display: grid; grid-template-columns: 1.4fr 1.2fr 0.8fr 1fr 1fr; gap: 8px; padding: 9px 18px; background: #f0eee9; border-bottom: 1px solid rgba(138,114,107,0.18);">
+          <sc-for list="{{ sheetHead }}" as="h" hint-placeholder-count="5">
+            <span style="font-family: 'Space Mono', monospace; font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; color: #8a726b;">{{ h.label }}</span>
+          </sc-for>
+        </div>
+        <sc-for list="{{ sheetRows }}" as="r" hint-placeholder-count="9">
+          <div style="display: grid; grid-template-columns: 1.4fr 1.2fr 0.8fr 1fr 1fr; gap: 8px; padding: 11px 18px; border-bottom: 1px solid rgba(138,114,107,0.1); align-items: center;" style-hover="background: #f0eee9;">
+            <span style="font-family: 'Space Mono', monospace; font-size: 12px; color: #1b1c19;">{{ r.room }}</span>
+            <span style="font-family: 'Hanken Grotesk', sans-serif; font-size: 13px; color: #56423c;">{{ r.guest }}</span>
+            <span style="font-family: 'Space Mono', monospace; font-size: 11px; color: #8a726b;">{{ r.time }}</span>
+            <span>
+              <sc-if value="{{ r.isIn }}" hint-placeholder-val="{{ true }}"><span style="display: inline-block; padding: 3px 8px; border-radius: 2px; background: #cde6d1; color: #1B3022; font-family: 'Space Mono', monospace; font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase;">Arriving</span></sc-if>
+              <sc-if value="{{ r.isOut }}" hint-placeholder-val="{{ false }}"><span style="display: inline-block; padding: 3px 8px; border-radius: 2px; background: #e4e2dd; color: #56423c; font-family: 'Space Mono', monospace; font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase;">Departing</span></sc-if>
+              <sc-if value="{{ r.isStay }}" hint-placeholder-val="{{ false }}"><span style="display: inline-block; padding: 3px 8px; border-radius: 2px; background: #F2E8D5; color: #614504; font-family: 'Space Mono', monospace; font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase;">In house</span></sc-if>
+              <sc-if value="{{ r.isVacant }}" hint-placeholder-val="{{ false }}"><span style="display: inline-block; padding: 3px 8px; border-radius: 2px; border: 1px solid rgba(138,114,107,0.3); color: #8a726b; font-family: 'Space Mono', monospace; font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase;">Vacant</span></sc-if>
+            </span>
+            <span style="font-family: 'Hanken Grotesk', sans-serif; font-size: 12px; color: #8a726b;">{{ r.note }}</span>
+          </div>
+        </sc-for>
+      </div>
+      </sc-if>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(330px, 1fr)); gap: 18px; margin-top: 20px; align-items: start;">
+        <div style="border: 1px solid rgba(138,114,107,0.22); background: #fbf9f4;">
+          <div style="padding: 14px 18px; border-bottom: 1px solid rgba(138,114,107,0.18); display: flex; justify-content: space-between; align-items: center; gap: 10px;">
+            <p style="font-family: 'Space Mono', monospace; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: #1b1c19; margin: 0;">Occupancy · next 14 nights</p>
+            <span style="font-family: 'Space Mono', monospace; font-size: 9px; color: #8a726b;">% keys sold</span>
+          </div>
+          <div style="padding: 16px; display: flex; align-items: flex-end; gap: 4px; height: 180px;">
+            <sc-for list="{{ occBars }}" as="b" hint-placeholder-count="14">
+              <div style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 5px; height: 100%;">
+                <span style="font-family: 'Space Mono', monospace; font-size: 9px; color: #8a726b;">{{ b.pct }}</span>
+                <sc-if value="{{ b.hot }}" hint-placeholder-val="{{ false }}"><span style="width: 100%; background: #842c0c; height: {{ b.h }};"></span></sc-if>
+                <sc-if value="{{ b.mid }}" hint-placeholder-val="{{ true }}"><span style="width: 100%; background: #4d6453; height: {{ b.h }};"></span></sc-if>
+                <sc-if value="{{ b.low }}" hint-placeholder-val="{{ false }}"><span style="width: 100%; background: #C5A059; height: {{ b.h }};"></span></sc-if>
+                <span style="font-family: 'Space Mono', monospace; font-size: 9px; color: #56423c;">{{ b.day }}</span>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+
+        <div style="border: 1px solid rgba(138,114,107,0.22); background: #fbf9f4;">
+          <div style="padding: 14px 18px; border-bottom: 1px solid rgba(138,114,107,0.18);">
+            <p style="font-family: 'Space Mono', monospace; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: #1b1c19; margin: 0;">{{ breakdownTitle }}</p>
+          </div>
+          <div style="display: grid; grid-template-columns: 1.7fr 0.7fr 1fr 0.8fr; gap: 8px; padding: 9px 18px; border-bottom: 1px solid rgba(138,114,107,0.18); background: #f0eee9;">
+            <sc-for list="{{ breakdownHead }}" as="h" hint-placeholder-count="4">
+              <span style="font-family: 'Space Mono', monospace; font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; color: #8a726b;">{{ h.label }}</span>
+            </sc-for>
+          </div>
+          <sc-for list="{{ breakdownRows }}" as="r" hint-placeholder-count="4">
+            <div style="display: grid; grid-template-columns: 1.7fr 0.7fr 1fr 0.8fr; gap: 8px; padding: 13px 18px; border-bottom: 1px solid rgba(138,114,107,0.1); align-items: center;" style-hover="background: #f0eee9;">
+              <span style="font-family: 'Hanken Grotesk', sans-serif; font-size: 13px; color: #1b1c19;">{{ r.a }}</span>
+              <span style="font-family: 'Space Mono', monospace; font-size: 12px; color: #1b1c19;">{{ r.b }}</span>
+              <span style="font-family: 'Space Mono', monospace; font-size: 12px; color: #1b1c19;">{{ r.c }}</span>
+              <span style="font-family: 'Space Mono', monospace; font-size: 12px; color: #4d6453;">{{ r.d }}</span>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(330px, 1fr)); gap: 18px; margin-top: 18px; align-items: start;">
+        <sc-if value="{{ isSuper }}" hint-placeholder-val="{{ true }}">
+        <div style="border: 1px solid rgba(138,114,107,0.22); background: #fbf9f4;">
+          <div style="padding: 14px 18px; border-bottom: 1px solid rgba(138,114,107,0.18); display: flex; justify-content: space-between; align-items: center; gap: 10px;">
+            <p style="font-family: 'Space Mono', monospace; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: #1b1c19; margin: 0;">Today · arrivals & departures</p>
+            <button onClick="{{ go.bookings }}" style="background: transparent; border: none; cursor: pointer; font-family: 'Space Mono', monospace; font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase; color: #842c0c; border-bottom: 1px solid #842c0c; padding: 0;">All bookings</button>
+          </div>
+          <sc-for list="{{ movements }}" as="m" hint-placeholder-count="6">
+            <div style="display: flex; gap: 11px; align-items: center; padding: 11px 18px; border-bottom: 1px solid rgba(138,114,107,0.1);" style-hover="background: #f0eee9;">
+              <sc-if value="{{ m.arr }}" hint-placeholder-val="{{ true }}"><span style="font-family: 'Space Mono', monospace; font-size: 9px; letter-spacing: 0.1em; padding: 3px 7px; background: #cde6d1; color: #1B3022; border-radius: 2px;">IN</span></sc-if>
+              <sc-if value="{{ m.dep }}" hint-placeholder-val="{{ false }}"><span style="font-family: 'Space Mono', monospace; font-size: 9px; letter-spacing: 0.1em; padding: 3px 7px; background: #e4e2dd; color: #56423c; border-radius: 2px;">OUT</span></sc-if>
+              <span style="font-family: 'Space Mono', monospace; font-size: 11px; color: #8a726b; width: 46px;">{{ m.time }}</span>
+              <span style="font-family: 'Hanken Grotesk', sans-serif; font-size: 13px; color: #1b1c19; flex: 1; min-width: 70px;">{{ m.guest }}</span>
+              <span style="font-family: 'Space Mono', monospace; font-size: 10px; color: #56423c; text-align: right;">{{ m.room }}</span>
+            </div>
+          </sc-for>
+        </div>
+        </sc-if>
+
+        <div style="border: 1px solid rgba(138,114,107,0.22); background: #fbf9f4;">
+          <div style="padding: 14px 18px; border-bottom: 1px solid rgba(138,114,107,0.18); display: flex; justify-content: space-between; align-items: center; gap: 10px;">
+            <p style="font-family: 'Space Mono', monospace; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: #1b1c19; margin: 0;">Pending WhatsApp inquiries</p>
+            <button onClick="{{ go.inquiries }}" style="background: #F2E8D5; border: none; cursor: pointer; padding: 4px 8px; border-radius: 2px; font-family: 'Space Mono', monospace; font-size: 9px; letter-spacing: 0.08em; color: #614504;">{{ waCount }} open</button>
+          </div>
+          <sc-for list="{{ waQueue }}" as="q" hint-placeholder-count="4">
+            <div style="padding: 12px 18px; border-bottom: 1px solid rgba(138,114,107,0.1); display: flex; flex-wrap: wrap; gap: 10px; align-items: center;" style-hover="background: #f0eee9;">
+              <div style="flex: 1; min-width: 140px;">
+                <p style="font-family: 'Hanken Grotesk', sans-serif; font-size: 13px; color: #1b1c19; margin: 0 0 3px;">{{ q.guest }}</p>
+                <p style="font-family: 'Space Mono', monospace; font-size: 10px; color: #8a726b; margin: 0;">{{ q.meta }}</p>
+              </div>
+              <sc-if value="{{ q.urgent }}" hint-placeholder-val="{{ false }}"><span style="font-family: 'Space Mono', monospace; font-size: 9px; color: #ba1a1a;">{{ q.age }}</span></sc-if>
+              <sc-if value="{{ q.calm }}" hint-placeholder-val="{{ true }}"><span style="font-family: 'Space Mono', monospace; font-size: 9px; color: #8a726b;">{{ q.age }}</span></sc-if>
+              <button onClick="{{ go.inquiries }}" style="background: transparent; border: 1px solid #C5A059; color: #1B3022; cursor: pointer; padding: 7px 11px; border-radius: 2px; font-family: 'Space Mono', monospace; font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase;" style-hover="background: #F2E8D5;">Reply</button>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+    </sc-if>
+
+    <!-- ============ BOOKINGS ============ -->
+    <sc-if value="{{ pBookings }}" hint-placeholder-val="{{ false }}">
+    <div style="display: flex; align-items: stretch; flex-wrap: wrap;">
+      <div style="flex: 1; min-width: 340px; padding: clamp(18px, 2.5vw, 26px);">
+        <h1 style="font-family: 'Bodoni Moda', serif; font-size: clamp(25px, 3.2vw, 32px); font-weight: 500; color: #1b1c19; margin: 0 0 4px;">Bookings</h1>
+        <p style="font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: #8a726b; margin: 0 0 18px;">{{ bookingsSub }}</p>
+
+        <!-- one-line toolbar -->
+        <div style="border: 1px solid rgba(138,114,107,0.22); background: #fbf9f4; padding: 8px 10px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 16px;">
+          <div style="display: flex; align-items: center; gap: 7px; flex: 1; min-width: 180px; border-right: 1px solid rgba(138,114,107,0.15); padding-right: 10px;">
+            <span class="material-symbols-outlined" style="font-size: 17px; color: #8a726b;">search</span>
+            <input placeholder="Guest, reference or room…" style="flex: 1; min-width: 0; background: transparent; border: none; padding: 6px 0; font-family: 'Hanken Grotesk', sans-serif; font-size: 14px; color: #1b1c19;" />
+          </div>
+          <select style="background: transparent; border: 1px solid rgba(138,114,107,0.25); border-radius: 2px; padding: 8px 10px; font-family: 'Space Mono', monospace; font-size: 11px; color: #1b1c19; cursor: pointer;">
+            <option>All statuses</option><option>Confirmed</option><option>Pending WhatsApp</option><option>Cancelled</option><option>Refunded</option>
+          </select>
+          <select style="background: transparent; border: 1px solid rgba(138,114,107,0.25); border-radius: 2px; padding: 8px 10px; font-family: 'Space Mono', monospace; font-size: 11px; color: #1b1c19; cursor: pointer;">
+            <option>Sep — Oct 2026</option><option>This month</option><option>Next 90 days</option><option>All dates</option>
+          </select>
+          <div style="display: flex; border: 1px solid rgba(138,114,107,0.25); border-radius: 2px; overflow: hidden;">
+            <sc-for list="{{ viewToggle }}" as="v" hint-placeholder-count="2">
+              <button onClick="{{ v.go }}" style="background: transparent; border: none; cursor: pointer; padding: 0;">
+                <sc-if value="{{ v.on }}" hint-placeholder-val="{{ false }}"><span style="display: block; padding: 8px 12px; background: #1B3022; color: #fbf9f4; font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase;">{{ v.label }}</span></sc-if>
+                <sc-if value="{{ v.off }}" hint-placeholder-val="{{ true }}"><span style="display: block; padding: 8px 12px; color: #56423c; font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase;" style-hover="background: #f0eee9;">{{ v.label }}</span></sc-if>
+              </button>
+            </sc-for>
+          </div>
+        </div>
+
+        <sc-if value="{{ calView }}" hint-placeholder-val="{{ false }}">
+        <div style="border: 1px solid rgba(138,114,107,0.22); background: #fbf9f4; overflow-x: auto;">
+          <div style="padding: 13px 18px; border-bottom: 1px solid rgba(138,114,107,0.18); display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap;">
+            <p style="font-family: 'Space Mono', monospace; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: #1b1c19; margin: 0;">October 2026 · tape chart</p>
+            <div style="display: flex; gap: 12px; font-family: 'Space Mono', monospace; font-size: 9px; color: #8a726b;">
+              <span style="display: inline-flex; align-items: center; gap: 5px;"><span style="width: 9px; height: 9px; background: #4d6453;"></span>Confirmed</span>
+              <span style="display: inline-flex; align-items: center; gap: 5px;"><span style="width: 9px; height: 9px; background: #C5A059;"></span>Pending</span>
+              <span style="display: inline-flex; align-items: center; gap: 5px;"><span style="width: 9px; height: 9px; background: #e9e7e1;"></span>Free</span>
+            </div>
+          </div>
+          <div style="min-width: 700px; padding: 4px 0 14px;">
+            <div style="display: grid; grid-template-columns: 158px repeat(14, 1fr); gap: 2px; padding: 8px 18px; border-bottom: 1px solid rgba(138,114,107,0.15);">
+              <span style="font-family: 'Space Mono', monospace; font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; color: #8a726b;">Room</span>
+              <sc-for list="{{ tapeDays }}" as="d" hint-placeholder-count="14">
+                <span style="text-align: center; font-family: 'Space Mono', monospace; font-size: 9px; color: #8a726b;">{{ d.label }}</span>
+              </sc-for>
+            </div>
+            <sc-for list="{{ tapeRows }}" as="r" hint-placeholder-count="6">
+              <div style="display: grid; grid-template-columns: 158px repeat(14, 1fr); gap: 2px; padding: 4px 18px; align-items: center;">
+                <span style="font-family: 'Space Mono', monospace; font-size: 10px; color: #1b1c19; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ r.room }}</span>
+                <sc-for list="{{ r.cells }}" as="c" hint-placeholder-count="14">
+                  <div>
+                    <sc-if value="{{ c.conf }}" hint-placeholder-val="{{ false }}"><button onClick="{{ c.open }}" style="width: 100%; height: 28px; border: none; background: #4d6453; cursor: pointer;"></button></sc-if>
+                    <sc-if value="{{ c.pend }}" hint-placeholder-val="{{ false }}"><button onClick="{{ c.open }}" style="width: 100%; height: 28px; border: none; background: #C5A059; cursor: pointer;"></button></sc-if>
+                    <sc-if value="{{ c.free }}" hint-placeholder-val="{{ true }}"><span style="display: block; width: 100%; height: 28px; background: #e9e7e1;"></span></sc-if>
+                  </div>
+                </sc-for>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+        </sc-if>
+
+        <sc-if value="{{ listView }}" hint-placeholder-val="{{ true }}">
+        <div style="border: 1px solid rgba(138,114,107,0.22); background: #fbf9f4; overflow-x: auto;">
+          <div style="min-width: 680px;">
+            <div style="display: grid; grid-template-columns: 1.1fr 1.4fr 1.4fr 1.2fr 0.9fr 1fr; gap: 10px; padding: 10px 18px; background: #f0eee9; border-bottom: 1px solid rgba(138,114,107,0.18);">
+              <sc-for list="{{ listHead }}" as="h" hint-placeholder-count="6">
+                <span style="font-family: 'Space Mono', monospace; font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; color: #8a726b;">{{ h.label }}</span>
+              </sc-for>
+            </div>
+            <sc-for list="{{ rows }}" as="r" hint-placeholder-count="8">
+              <div onClick="{{ r.open }}" style="cursor: pointer; display: grid; grid-template-columns: 1.1fr 1.4fr 1.4fr 1.2fr 0.9fr 1fr; gap: 10px; padding: 12px 18px; border-bottom: 1px solid rgba(138,114,107,0.1); align-items: center;" style-hover="background: #f0eee9;">
+                <span style="font-family: 'Space Mono', monospace; font-size: 11px; color: #842c0c;">{{ r.ref }}</span>
+                <span style="font-family: 'Hanken Grotesk', sans-serif; font-size: 13px; color: #1b1c19;">{{ r.guest }}</span>
+                <span style="font-family: 'Hanken Grotesk', sans-serif; font-size: 12px; color: #56423c;">{{ r.room }}</span>
+                <span style="font-family: 'Space Mono', monospace; font-size: 11px; color: #1b1c19;">{{ r.dates }}</span>
+                <span style="font-family: 'Space Mono', monospace; font-size: 11px; color: #1b1c19;">{{ r.total }}</span>
+                <span>
+                  <sc-if value="{{ r.isConf }}" hint-placeholder-val="{{ true }}"><span style="display: inline-block; padding: 3px 8px; border-radius: 2px; background: #cde6d1; color: #1B3022; font-family: 'Space Mono', monospace; font-size: 9px; letter-spacing: 0.06em; text-transform: uppercase;">Confirmed</span></sc-if>
+                  <sc-if value="{{ r.isPend }}" hint-placeholder-val="{{ false }}"><span style="display: inline-block; padding: 3px 8px; border-radius: 2px; background: #F2E8D5; color: #614504; font-family: 'Space Mono', monospace; font-size: 9px; letter-spacing: 0.06em; text-transform: uppercase;">Pending WA</span></sc-if>
+                  <sc-if value="{{ r.isCanc }}" hint-placeholder-val="{{ false }}"><span style="display: inline-block; padding: 3px 8px; border-radius: 2px; background: #e4e2dd; color: #56423c; font-family: 'Space Mono', monospace; font-size: 9px; letter-spacing: 0.06em; text-transform: uppercase;">Cancelled</span></sc-if>
+                  <sc-if value="{{ r.isRef }}" hint-placeholder-val="{{ false }}"><span style="display: inline-block; padding: 3px 8px; border-radius: 2px; background: #ffdad6; color: #93000a; font-family: 'Space Mono', monospace; font-size: 9px; letter-spacing: 0.06em; text-transform: uppercase;">Refunded</span></sc-if>
+                </span>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+        <p style="font-family: 'Space Mono', monospace; font-size: 10px; color: #8a726b; margin: 12px 0 0;">{{ rowCount }}</p>
+        </sc-if>
+      </div>
+
+      <sc-if value="{{ drawerOpen }}" hint-placeholder-val="{{ true }}">
+      <aside style="width: 368px; flex: 0 0 368px; min-width: 300px; background: #fbf9f4; border-left: 1px solid rgba(138,114,107,0.22); padding: 20px; position: sticky; top: 90px; align-self: flex-start; max-height: calc(100vh - 90px); overflow-y: auto;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; margin-bottom: 16px;">
+          <div>
+            <p style="font-family: 'Space Mono', monospace; font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase; color: #8a726b; margin: 0 0 6px;">Booking</p>
+            <p style="font-family: 'Space Mono', monospace; font-size: 17px; font-weight: 700; letter-spacing: 0.06em; color: #842c0c; margin: 0;">{{ sel.ref }}</p>
+          </div>
+          <button onClick="{{ closeDrawer }}" style="background: transparent; border: 1px solid rgba(138,114,107,0.25); cursor: pointer; width: 28px; height: 28px; border-radius: 2px; color: #56423c;">✕</button>
+        </div>
+        <div style="margin-bottom: 16px;">
+          <sc-if value="{{ sel.isConf }}" hint-placeholder-val="{{ true }}"><span style="display: inline-block; padding: 5px 10px; border-radius: 2px; background: #cde6d1; color: #1B3022; font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase;">Confirmed · paid</span></sc-if>
+          <sc-if value="{{ sel.isPend }}" hint-placeholder-val="{{ false }}"><span style="display: inline-block; padding: 5px 10px; border-radius: 2px; background: #F2E8D5; color: #614504; font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase;">Pending WhatsApp · hold</span></sc-if>
+          <sc-if value="{{ sel.isCanc }}" hint-placeholder-val="{{ false }}"><span style="display: inline-block; padding: 5px 10px; border-radius: 2px; background: #e4e2dd; color: #56423c; font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase;">Cancelled</span></sc-if>
+          <sc-if value="{{ sel.isRef }}" hint-placeholder-val="{{ false }}"><span style="display: inline-block; padding: 5px 10px; border-radius: 2px; background: #ffdad6; color: #93000a; font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase;">Refunded</span></sc-if>
+        </div>
+        <sc-for list="{{ sel.groups }}" as="grp" hint-placeholder-count="3">
+          <div>
+            <p style="font-family: 'Space Mono', monospace; font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase; color: #8a726b; margin: 18px 0 8px; border-top: 1px solid rgba(138,114,107,0.2); padding-top: 14px;">{{ grp.title }}</p>
+            <sc-for list="{{ grp.rows }}" as="g" hint-placeholder-count="4">
+              <div style="display: flex; justify-content: space-between; gap: 12px; padding: 6px 0; border-bottom: 1px solid rgba(138,114,107,0.1);">
+                <span style="font-family: 'Space Mono', monospace; font-size: 10px; color: #8a726b;">{{ g.k }}</span>
+                <span style="font-family: 'Space Mono', monospace; font-size: 11px; color: #1b1c19; text-align: right;">{{ g.v }}</span>
+              </div>
+            </sc-for>
+          </div>
+        </sc-for>
+        <div style="display: flex; justify-content: space-between; padding: 14px 0 0;">
+          <span style="font-family: 'Space Mono', monospace; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 700; color: #1b1c19;">Total</span>
+          <span style="font-family: 'Space Mono', monospace; font-size: 17px; font-weight: 700; color: #1b1c19;">{{ sel.total }}</span>
+        </div>
+        <div style="border-top: 1px solid rgba(138,114,107,0.2); margin-top: 18px; padding-top: 16px; display: flex; flex-direction: column; gap: 8px;">
+          <sc-if value="{{ sel.isPend }}" hint-placeholder-val="{{ false }}">
+            <button style="width: 100%; background: #842c0c; color: #ffffff; border: none; cursor: pointer; padding: 13px; border-radius: 2px; font-family: 'Space Mono', monospace; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; min-height: 44px;" style-hover="background: #a44322;">Confirm WhatsApp booking</button>
+          </sc-if>
+          <button style="width: 100%; background: #F2E8D5; color: #1B3022; border: 1px solid #C5A059; cursor: pointer; padding: 12px; border-radius: 2px; font-family: 'Space Mono', monospace; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; min-height: 44px; display: flex; align-items: center; justify-content: center; gap: 8px;" style-hover="background: #e9dcc2;"><span class="material-symbols-outlined" style="font-size: 16px; font-variation-settings: 'FILL' 1;">forum</span>Open WhatsApp thread</button>
+          <button style="width: 100%; background: transparent; color: #1B3022; border: 1px solid rgba(138,114,107,0.3); cursor: pointer; padding: 12px; border-radius: 2px; font-family: 'Space Mono', monospace; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; min-height: 44px;" style-hover="border-color: #4d6453;">Resend confirmation</button>
+          <div style="display: flex; gap: 8px;">
+            <button style="flex: 1; background: transparent; color: #ba1a1a; border: 1px solid rgba(186,26,26,0.4); cursor: pointer; padding: 12px 8px; border-radius: 2px; font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; min-height: 44px;" style-hover="background: #ffdad6;">Cancel</button>
+            <sc-if value="{{ canRefund }}" hint-placeholder-val="{{ true }}">
+              <button style="flex: 1; background: transparent; color: #ba1a1a; border: 1px solid rgba(186,26,26,0.4); cursor: pointer; padding: 12px 8px; border-radius: 2px; font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; min-height: 44px;" style-hover="background: #ffdad6;">Refund</button>
+            </sc-if>
+            <sc-if value="{{ mustRequest }}" hint-placeholder-val="{{ false }}">
+              <button style="flex: 1; background: transparent; color: #8a726b; border: 1px dashed rgba(138,114,107,0.5); cursor: pointer; padding: 12px 8px; border-radius: 2px; font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; min-height: 44px;">Request refund</button>
+            </sc-if>
+          </div>
+          <p style="font-family: 'Hanken Grotesk', sans-serif; font-size: 12px; line-height: 18px; color: #8a726b; margin: 6px 0 0;">{{ sel.policy }}</p>
+          <sc-if value="{{ mustRequest }}" hint-placeholder-val="{{ false }}">
+            <p style="font-family: 'Space Mono', monospace; font-size: 10px; line-height: 16px; color: #614504; background: #F2E8D5; padding: 9px 10px; margin: 4px 0 0;">Refunds above ₹10,000 need group approval. Your request goes to the group desk.</p>
+          </sc-if>
+        </div>
+      </aside>
+      </sc-if>
+    </div>
+    </sc-if>
+
+    <!-- ============ ROOMS & RATES ============ -->
+    <sc-if value="{{ pRooms }}" hint-placeholder-val="{{ false }}">
+    <div style="padding: clamp(18px, 2.5vw, 26px);">
+      <div style="display: flex; flex-wrap: wrap; gap: 12px; justify-content: space-between; align-items: flex-end; margin-bottom: 18px;">
+        <div>
+          <h1 style="font-family: 'Bodoni Moda', serif; font-size: clamp(25px, 3.2vw, 32px); font-weight: 500; color: #1b1c19; margin: 0 0 4px;">Rooms &amp; rates</h1>
+          <p style="font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: #8a726b; margin: 0;">{{ roomsSub }}</p>
+        </div>
+        <div style="display: flex; gap: 8px; align-items: center;">
+          <select style="background: transparent; border: 1px solid rgba(138,114,107,0.25); border-radius: 2px; padding: 8px 10px; font-family: 'Space Mono', monospace; font-size: 11px; cursor: pointer;">
+            <option>All room types</option><option>Suites</option><option>Rooms</option><option>Cottages</option>
+          </select>
+          <button style="background: #1B3022; color: #fbf9f4; border: none; cursor: pointer; padding: 9px 14px; border-radius: 2px; font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase;">{{ ratesAction }}</button>
+        </div>
+      </div>
+
+      <div style="border: 1px solid rgba(138,114,107,0.22); background: #fbf9f4; overflow-x: auto; margin-bottom: 20px;">
+        <div style="min-width: 720px;">
+          <div style="display: grid; grid-template-columns: 1.6fr 0.8fr 0.7fr 0.9fr 0.9fr 0.9fr 0.8fr; gap: 8px; padding: 10px 18px; background: #f0eee9; border-bottom: 1px solid rgba(138,114,107,0.18);">
+            <sc-for list="{{ roomsHead }}" as="h" hint-placeholder-count="7">
+              <span style="font-family: 'Space Mono', monospace; font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; color: #8a726b;">{{ h.label }}</span>
+            </sc-for>
+          </div>
+          <sc-for list="{{ roomsRows }}" as="r" hint-placeholder-count="6">
+            <div style="display: grid; grid-template-columns: 1.6fr 0.8fr 0.7fr 0.9fr 0.9fr 0.9fr 0.8fr; gap: 8px; padding: 12px 18px; border-bottom: 1px solid rgba(138,114,107,0.1); align-items: center;" style-hover="background: #f0eee9;">
+              <span style="font-family: 'Hanken Grotesk', sans-serif; font-size: 13px; color: #1b1c19;">{{ r.name }}</span>
+              <span style="font-family: 'Space Mono', monospace; font-size: 11px; color: #56423c;">{{ r.house }}</span>
+              <span style="font-family: 'Space Mono', monospace; font-size: 11px; color: #1b1c19;">{{ r.keys }}</span>
+              <span style="font-family: 'Space Mono', monospace; font-size: 11px; color: #1b1c19;">{{ r.base }}</span>
+              <span style="font-family: 'Space Mono', monospace; font-size: 11px; color: #1b1c19;">{{ r.peak }}</span>
+              <span style="font-family: 'Space Mono', monospace; font-size: 11px; color: #4d6453;">{{ r.occ }}</span>
+              <span>
+                <sc-if value="{{ r.live }}" hint-placeholder-val="{{ true }}"><span style="display: inline-block; padding: 3px 8px; border-radius: 2px; background: #cde6d1; color: #1B3022; font-family: 'Space Mono', monospace; font-size: 9px; letter-spacing: 0.06em; text-transform: uppercase;">Selling</span></sc-if>
+                <sc-if value="{{ r.stopped }}" hint-placeholder-val="{{ false }}"><span style="display: inline-block; padding: 3px 8px; border-radius: 2px; background: #ffdad6; color: #93000a; font-family: 'Space Mono', monospace; font-size: 9px; letter-spacing: 0.06em; text-transform: uppercase;">Stop sell</span></sc-if>
+                <sc-if value="{{ r.maint }}" hint-placeholder-val="{{ false }}"><span style="display: inline-block; padding: 3px 8px; border-radius: 2px; background: #e4e2dd; color: #56423c; font-family: 'Space Mono', monospace; font-size: 9px; letter-spacing: 0.06em; text-transform: uppercase;">Maintenance</span></sc-if>
+              </span>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 18px;">
+        <div style="border: 1px solid rgba(138,114,107,0.22); background: #fbf9f4;">
+          <div style="padding: 14px 18px; border-bottom: 1px solid rgba(138,114,107,0.18);">
+            <p style="font-family: 'Space Mono', monospace; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: #1b1c19; margin: 0;">Rate plans</p>
+          </div>
+          <sc-for list="{{ ratePlans }}" as="p" hint-placeholder-count="4">
+            <div style="padding: 13px 18px; border-bottom: 1px solid rgba(138,114,107,0.1); display: flex; flex-wrap: wrap; gap: 10px; align-items: center;">
+              <div style="flex: 1; min-width: 150px;">
+                <p style="font-family: 'Space Mono', monospace; font-size: 12px; color: #1b1c19; margin: 0 0 3px;">{{ p.name }}</p>
+                <p style="font-family: 'Hanken Grotesk', sans-serif; font-size: 12px; color: #8a726b; margin: 0;">{{ p.terms }}</p>
+              </div>
+              <span style="font-family: 'Space Mono', monospace; font-size: 12px; color: #1b1c19;">{{ p.mult }}</span>
+              <span style="font-family: 'Space Mono', monospace; font-size: 10px; color: #4d6453;">{{ p.share }}</span>
+            </div>
+          </sc-for>
+        </div>
+        <div style="border: 1px solid rgba(138,114,107,0.22); background: #fbf9f4;">
+          <div style="padding: 14px 18px; border-bottom: 1px solid rgba(138,114,107,0.18);">
+            <p style="font-family: 'Space Mono', monospace; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: #1b1c19; margin: 0;">Seasons &amp; closures</p>
+          </div>
+          <sc-for list="{{ seasons }}" as="s" hint-placeholder-count="4">
+            <div style="padding: 13px 18px; border-bottom: 1px solid rgba(138,114,107,0.1); display: flex; justify-content: space-between; gap: 12px; align-items: center;">
+              <div>
+                <p style="font-family: 'Space Mono', monospace; font-size: 12px; color: #1b1c19; margin: 0 0 3px;">{{ s.name }}</p>
+                <p style="font-family: 'Space Mono', monospace; font-size: 10px; color: #8a726b; margin: 0;">{{ s.range }}</p>
+              </div>
+              <span style="font-family: 'Space Mono', monospace; font-size: 12px; color: #842c0c;">{{ s.adj }}</span>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+    </sc-if>
+
+    <!-- ============ GUESTS ============ -->
+    <sc-if value="{{ pGuests }}" hint-placeholder-val="{{ false }}">
+    <div style="padding: clamp(18px, 2.5vw, 26px);">
+      <h1 style="font-family: 'Bodoni Moda', serif; font-size: clamp(25px, 3.2vw, 32px); font-weight: 500; color: #1b1c19; margin: 0 0 4px;">Guests</h1>
+      <p style="font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: #8a726b; margin: 0 0 18px;">{{ guestsSub }}</p>
+
+      <div style="border: 1px solid rgba(138,114,107,0.22); background: #fbf9f4; padding: 8px 10px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 16px;">
+        <div style="display: flex; align-items: center; gap: 7px; flex: 1; min-width: 180px; border-right: 1px solid rgba(138,114,107,0.15); padding-right: 10px;">
+          <span class="material-symbols-outlined" style="font-size: 17px; color: #8a726b;">search</span>
+          <input placeholder="Name, email or phone…" style="flex: 1; min-width: 0; background: transparent; border: none; padding: 6px 0; font-family: 'Hanken Grotesk', sans-serif; font-size: 14px;" />
+        </div>
+        <select style="background: transparent; border: 1px solid rgba(138,114,107,0.25); border-radius: 2px; padding: 8px 10px; font-family: 'Space Mono', monospace; font-size: 11px; cursor: pointer;">
+          <option>All guests</option><option>Repeat guests</option><option>In house now</option><option>Account holders</option>
+        </select>
+      </div>
+
+      <div style="border: 1px solid rgba(138,114,107,0.22); background: #fbf9f4; overflow-x: auto;">
+        <div style="min-width: 700px;">
+          <div style="display: grid; grid-template-columns: 1.4fr 1.6fr 1fr 0.7fr 1fr 1fr; gap: 8px; padding: 10px 18px; background: #f0eee9; border-bottom: 1px solid rgba(138,114,107,0.18);">
+            <sc-for list="{{ guestsHead }}" as="h" hint-placeholder-count="6">
+              <span style="font-family: 'Space Mono', monospace; font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; color: #8a726b;">{{ h.label }}</span>
+            </sc-for>
+          </div>
+          <sc-for list="{{ guestRows }}" as="g" hint-placeholder-count="7">
+            <div style="display: grid; grid-template-columns: 1.4fr 1.6fr 1fr 0.7fr 1fr 1fr; gap: 8px; padding: 12px 18px; border-bottom: 1px solid rgba(138,114,107,0.1); align-items: center;" style-hover="background: #f0eee9;">
+              <span style="font-family: 'Hanken Grotesk', sans-serif; font-size: 13px; color: #1b1c19;">{{ g.name }}</span>
+              <span style="font-family: 'Space Mono', monospace; font-size: 10px; color: #56423c;">{{ g.email }}</span>
+              <span style="font-family: 'Space Mono', monospace; font-size: 10px; color: #56423c;">{{ g.city }}</span>
+              <span style="font-family: 'Space Mono', monospace; font-size: 11px; color: #1b1c19;">{{ g.stays }}</span>
+              <span style="font-family: 'Space Mono', monospace; font-size: 11px; color: #1b1c19;">{{ g.value }}</span>
+              <span>
+                <sc-if value="{{ g.inHouse }}" hint-placeholder-val="{{ false }}"><span style="display: inline-block; padding: 3px 8px; border-radius: 2px; background: #cde6d1; color: #1B3022; font-family: 'Space Mono', monospace; font-size: 9px; letter-spacing: 0.06em; text-transform: uppercase;">In house</span></sc-if>
+                <sc-if value="{{ g.repeat }}" hint-placeholder-val="{{ true }}"><span style="display: inline-block; padding: 3px 8px; border-radius: 2px; background: #F2E8D5; color: #614504; font-family: 'Space Mono', monospace; font-size: 9px; letter-spacing: 0.06em; text-transform: uppercase;">Repeat</span></sc-if>
+                <sc-if value="{{ g.plain }}" hint-placeholder-val="{{ false }}"><span style="font-family: 'Space Mono', monospace; font-size: 9px; color: #8a726b;">—</span></sc-if>
+              </span>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+    </sc-if>
+
+    <!-- ============ INQUIRIES ============ -->
+    <sc-if value="{{ pInquiries }}" hint-placeholder-val="{{ false }}">
+    <div style="padding: clamp(18px, 2.5vw, 26px);">
+      <h1 style="font-family: 'Bodoni Moda', serif; font-size: clamp(25px, 3.2vw, 32px); font-weight: 500; color: #1b1c19; margin: 0 0 4px;">Inquiries</h1>
+      <p style="font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: #8a726b; margin: 0 0 18px;">{{ inqSub }}</p>
+
+      <div style="display: flex; flex-wrap: wrap; background: #fbf9f4; border: 1px solid rgba(138,114,107,0.22); margin-bottom: 18px; overflow: hidden;">
+        <sc-for list="{{ inqStats }}" as="t" hint-placeholder-count="4">
+          <div style="flex: 1 1 160px; min-width: 0; background: #fbf9f4; padding: 14px 16px; box-shadow: 1px 0 0 rgba(138,114,107,0.22), 0 1px 0 rgba(138,114,107,0.22);">
+            <p style="font-family: 'Space Mono', monospace; font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase; color: #8a726b; margin: 0 0 8px;">{{ t.k }}</p>
+            <p style="font-family: 'Space Mono', monospace; font-size: 22px; font-weight: 700; color: #1b1c19; margin: 0;">{{ t.v }}</p>
+          </div>
+        </sc-for>
+      </div>
+
+      <div style="border: 1px solid rgba(138,114,107,0.22); background: #fbf9f4;">
+        <div style="padding: 12px 18px; border-bottom: 1px solid rgba(138,114,107,0.18); display: flex; flex-wrap: wrap; gap: 10px; justify-content: space-between; align-items: center;">
+          <p style="font-family: 'Space Mono', monospace; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: #1b1c19; margin: 0;">WhatsApp thread queue</p>
+          <select style="background: transparent; border: 1px solid rgba(138,114,107,0.25); border-radius: 2px; padding: 7px 10px; font-family: 'Space Mono', monospace; font-size: 10px; cursor: pointer;">
+            <option>Oldest first</option><option>Newest first</option><option>Expiring holds</option>
+          </select>
+        </div>
+        <sc-for list="{{ inqRows }}" as="q" hint-placeholder-count="6">
+          <div style="padding: 14px 18px; border-bottom: 1px solid rgba(138,114,107,0.1); display: flex; flex-wrap: wrap; gap: 14px; align-items: flex-start;" style-hover="background: #f0eee9;">
+            <div style="flex: 1; min-width: 220px;">
+              <div style="display: flex; flex-wrap: wrap; gap: 9px; align-items: center; margin-bottom: 5px;">
+                <span style="font-family: 'Hanken Grotesk', sans-serif; font-size: 14px; color: #1b1c19;">{{ q.guest }}</span>
+                <span style="font-family: 'Space Mono', monospace; font-size: 10px; color: #8a726b;">{{ q.phone }}</span>
+                <sc-if value="{{ q.hold }}" hint-placeholder-val="{{ false }}"><span style="padding: 2px 7px; border-radius: 2px; background: #F2E8D5; color: #614504; font-family: 'Space Mono', monospace; font-size: 9px; letter-spacing: 0.06em; text-transform: uppercase;">Hold {{ q.holdTime }}</span></sc-if>
+              </div>
+              <p style="font-family: 'Hanken Grotesk', sans-serif; font-size: 13px; line-height: 20px; color: #56423c; margin: 0 0 6px; max-width: 62ch;">{{ q.msg }}</p>
+              <p style="font-family: 'Space Mono', monospace; font-size: 10px; color: #8a726b; margin: 0;">{{ q.meta }}</p>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 6px; min-width: 132px;">
+              <button style="background: #842c0c; color: #ffffff; border: none; cursor: pointer; padding: 9px 12px; border-radius: 2px; font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase;" style-hover="background: #a44322;">Reply &amp; quote</button>
+              <button style="background: transparent; color: #1B3022; border: 1px solid #C5A059; cursor: pointer; padding: 8px 12px; border-radius: 2px; font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase;" style-hover="background: #F2E8D5;">Convert to booking</button>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+    </sc-if>
+
+    <!-- ============ REPORTS (super only) ============ -->
+    <sc-if value="{{ pReports }}" hint-placeholder-val="{{ false }}">
+    <div style="padding: clamp(18px, 2.5vw, 26px);">
+      <div style="display: flex; flex-wrap: wrap; gap: 12px; justify-content: space-between; align-items: flex-end; margin-bottom: 18px;">
+        <div>
+          <h1 style="font-family: 'Bodoni Moda', serif; font-size: clamp(25px, 3.2vw, 32px); font-weight: 500; color: #1b1c19; margin: 0 0 4px;">Reports</h1>
+          <p style="font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: #8a726b; margin: 0;">Group · FY 2026–27 · all four houses</p>
+        </div>
+        <div style="display: flex; gap: 8px;">
+          <select style="background: transparent; border: 1px solid rgba(138,114,107,0.25); border-radius: 2px; padding: 8px 10px; font-family: 'Space Mono', monospace; font-size: 11px; cursor: pointer;">
+            <option>Aug 2026</option><option>Jul 2026</option><option>Q2 FY27</option><option>YTD</option>
+          </select>
+          <button style="background: transparent; border: 1px solid #C5A059; color: #1B3022; cursor: pointer; padding: 9px 14px; border-radius: 2px; font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase;">Export CSV</button>
+        </div>
+      </div>
+
+      <div style="border: 1px solid rgba(138,114,107,0.22); background: #fbf9f4; overflow-x: auto; margin-bottom: 20px;">
+        <div style="min-width: 760px;">
+          <div style="display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr 1fr 1fr; gap: 8px; padding: 10px 18px; background: #f0eee9; border-bottom: 1px solid rgba(138,114,107,0.18);">
+            <sc-for list="{{ reportHead }}" as="h" hint-placeholder-count="6">
+              <span style="font-family: 'Space Mono', monospace; font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; color: #8a726b;">{{ h.label }}</span>
+            </sc-for>
+          </div>
+          <sc-for list="{{ reportRows }}" as="r" hint-placeholder-count="5">
+            <div style="display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr 1fr 1fr; gap: 8px; padding: 12px 18px; border-bottom: 1px solid rgba(138,114,107,0.1);" style-hover="background: #f0eee9;">
+              <span style="font-family: 'Hanken Grotesk', sans-serif; font-size: 13px; color: #1b1c19;">{{ r.house }}</span>
+              <span style="font-family: 'Space Mono', monospace; font-size: 11px; color: #1b1c19;">{{ r.rev }}</span>
+              <span style="font-family: 'Space Mono', monospace; font-size: 11px; color: #1b1c19;">{{ r.occ }}</span>
+              <span style="font-family: 'Space Mono', monospace; font-size: 11px; color: #1b1c19;">{{ r.adr }}</span>
+              <span style="font-family: 'Space Mono', monospace; font-size: 11px; color: #1b1c19;">{{ r.revpar }}</span>
+              <span style="font-family: 'Space Mono', monospace; font-size: 11px; color: #4d6453;">{{ r.direct }}</span>
+            </div>
+          </sc-for>
+          <div style="display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr 1fr 1fr; gap: 8px; padding: 14px 18px; background: #f0eee9;">
+            <span style="font-family: 'Space Mono', monospace; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; font-weight: 700; color: #1b1c19;">Group</span>
+            <span style="font-family: 'Space Mono', monospace; font-size: 12px; font-weight: 700; color: #1b1c19;">₹41.2L</span>
+            <span style="font-family: 'Space Mono', monospace; font-size: 12px; font-weight: 700; color: #1b1c19;">78%</span>
+            <span style="font-family: 'Space Mono', monospace; font-size: 12px; font-weight: 700; color: #1b1c19;">₹13,400</span>
+            <span style="font-family: 'Space Mono', monospace; font-size: 12px; font-weight: 700; color: #1b1c19;">₹10,452</span>
+            <span style="font-family: 'Space Mono', monospace; font-size: 12px; font-weight: 700; color: #4d6453;">91%</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 18px;">
+        <div style="border: 1px solid rgba(138,114,107,0.22); background: #fbf9f4;">
+          <div style="padding: 14px 18px; border-bottom: 1px solid rgba(138,114,107,0.18);">
+            <p style="font-family: 'Space Mono', monospace; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: #1b1c19; margin: 0;">Revenue by month · ₹ lakh</p>
+          </div>
+          <div style="padding: 16px; display: flex; align-items: flex-end; gap: 8px; height: 170px;">
+            <sc-for list="{{ revBars }}" as="b" hint-placeholder-count="8">
+              <div style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 5px; height: 100%;">
+                <span style="font-family: 'Space Mono', monospace; font-size: 9px; color: #8a726b;">{{ b.v }}</span>
+                <span style="width: 100%; background: #4d6453; height: {{ b.h }};"></span>
+                <span style="font-family: 'Space Mono', monospace; font-size: 9px; color: #56423c;">{{ b.m }}</span>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+        <div style="border: 1px solid rgba(138,114,107,0.22); background: #fbf9f4;">
+          <div style="padding: 14px 18px; border-bottom: 1px solid rgba(138,114,107,0.18);">
+            <p style="font-family: 'Space Mono', monospace; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: #1b1c19; margin: 0;">Channel mix · Aug</p>
+          </div>
+          <sc-for list="{{ channels }}" as="c" hint-placeholder-count="4">
+            <div style="padding: 13px 18px; border-bottom: 1px solid rgba(138,114,107,0.1);">
+              <div style="display: flex; justify-content: space-between; margin-bottom: 7px;">
+                <span style="font-family: 'Space Mono', monospace; font-size: 11px; color: #1b1c19;">{{ c.name }}</span>
+                <span style="font-family: 'Space Mono', monospace; font-size: 11px; color: #56423c;">{{ c.pct }}</span>
+              </div>
+              <div style="height: 6px; background: #e9e7e1;">
+                <span style="display: block; height: 6px; background: #C5A059; width: {{ c.pct }};"></span>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+    </sc-if>
+
+    <!-- ============ SETTINGS ============ -->
+    <sc-if value="{{ pSettings }}" hint-placeholder-val="{{ false }}">
+    <div style="padding: clamp(18px, 2.5vw, 26px); max-width: 940px;">
+      <h1 style="font-family: 'Bodoni Moda', serif; font-size: clamp(25px, 3.2vw, 32px); font-weight: 500; color: #1b1c19; margin: 0 0 4px;">Settings</h1>
+      <p style="font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: #8a726b; margin: 0 0 22px;">{{ settingsSub }}</p>
+
+      <div style="border: 1px solid rgba(138,114,107,0.22); background: #fbf9f4; margin-bottom: 18px;">
+        <div style="padding: 14px 18px; border-bottom: 1px solid rgba(138,114,107,0.18);">
+          <p style="font-family: 'Space Mono', monospace; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: #1b1c19; margin: 0;">{{ teamTitle }}</p>
+        </div>
+        <div style="display: grid; grid-template-columns: 1.3fr 1.6fr 1.2fr 1fr; gap: 8px; padding: 10px 18px; background: #f0eee9; border-bottom: 1px solid rgba(138,114,107,0.18);">
+          <sc-for list="{{ teamHead }}" as="h" hint-placeholder-count="4">
+            <span style="font-family: 'Space Mono', monospace; font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; color: #8a726b;">{{ h.label }}</span>
+          </sc-for>
+        </div>
+        <sc-for list="{{ team }}" as="t" hint-placeholder-count="5">
+          <div style="display: grid; grid-template-columns: 1.3fr 1.6fr 1.2fr 1fr; gap: 8px; padding: 12px 18px; border-bottom: 1px solid rgba(138,114,107,0.1); align-items: center;">
+            <span style="font-family: 'Hanken Grotesk', sans-serif; font-size: 13px; color: #1b1c19;">{{ t.name }}</span>
+            <span style="font-family: 'Space Mono', monospace; font-size: 10px; color: #56423c;">{{ t.email }}</span>
+            <span style="font-family: 'Space Mono', monospace; font-size: 10px; color: #56423c;">{{ t.scope }}</span>
+            <span>
+              <sc-if value="{{ t.isSuper }}" hint-placeholder-val="{{ false }}"><span style="display: inline-block; padding: 3px 8px; border-radius: 2px; background: #1B3022; color: #fbf9f4; font-family: 'Space Mono', monospace; font-size: 9px; letter-spacing: 0.06em; text-transform: uppercase;">Super admin</span></sc-if>
+              <sc-if value="{{ t.isMgr }}" hint-placeholder-val="{{ true }}"><span style="display: inline-block; padding: 3px 8px; border-radius: 2px; background: #F2E8D5; color: #614504; font-family: 'Space Mono', monospace; font-size: 9px; letter-spacing: 0.06em; text-transform: uppercase;">Manager</span></sc-if>
+              <sc-if value="{{ t.isDesk }}" hint-placeholder-val="{{ false }}"><span style="display: inline-block; padding: 3px 8px; border-radius: 2px; background: #e4e2dd; color: #56423c; font-family: 'Space Mono', monospace; font-size: 9px; letter-spacing: 0.06em; text-transform: uppercase;">Front desk</span></sc-if>
+            </span>
+          </div>
+        </sc-for>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 18px;">
+        <sc-for list="{{ settingGroups }}" as="grp" hint-placeholder-count="2">
+          <div style="border: 1px solid rgba(138,114,107,0.22); background: #fbf9f4;">
+            <div style="padding: 14px 18px; border-bottom: 1px solid rgba(138,114,107,0.18);">
+              <p style="font-family: 'Space Mono', monospace; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: #1b1c19; margin: 0;">{{ grp.title }}</p>
+            </div>
+            <sc-for list="{{ grp.items }}" as="i" hint-placeholder-count="4">
+              <div style="padding: 13px 18px; border-bottom: 1px solid rgba(138,114,107,0.1); display: flex; justify-content: space-between; gap: 14px; align-items: center;">
+                <div>
+                  <p style="font-family: 'Hanken Grotesk', sans-serif; font-size: 13px; color: #1b1c19; margin: 0 0 2px;">{{ i.label }}</p>
+                  <p style="font-family: 'Hanken Grotesk', sans-serif; font-size: 12px; color: #8a726b; margin: 0;">{{ i.hint }}</p>
+                </div>
+                <span style="font-family: 'Space Mono', monospace; font-size: 11px; color: #4d6453; white-space: nowrap;">{{ i.value }}</span>
+              </div>
+            </sc-for>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+    </sc-if>
+
+  </div>
+</div>
+</sc-if>
+
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;startPage&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;login&quot;,&quot;options&quot;:[&quot;login&quot;,&quot;dashboard&quot;,&quot;bookings&quot;,&quot;rooms&quot;,&quot;guests&quot;,&quot;inquiries&quot;,&quot;reports&quot;,&quot;settings&quot;],&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Prototype&quot;},&quot;role&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;super&quot;,&quot;options&quot;:[&quot;super&quot;,&quot;manager&quot;],&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Prototype&quot;},&quot;showPrototypePager&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Prototype&quot;}}">
+const PROPS = [
+  { id: 'all', label: 'All properties', name: 'All properties' },
+  { id: 'alleppey', label: 'Alleppey', name: 'The Alleppey Ledger' },
+  { id: 'munnar', label: 'Munnar', name: 'Munnar Estate' },
+  { id: 'delhi', label: 'Delhi', name: "Lutyens' Haven" },
+  { id: 'goa', label: 'Goa', name: 'Assagao Villa' }
+];
+
+const BOOKINGS = [
+  { ref: 'RGL-2610-4471', guest: 'Arjun Mehta', prop: 'alleppey', room: 'Lake Verandah Suite', dates: '12—15 OCT', total: '₹28,560', status: 'conf', email: 'arjun.mehta@example.com', phone: '+91 98200 41182', src: 'Direct · web', nights: '3', plan: 'Refundable + b/fast', method: 'Card · HDFC ••4417', paidOn: '28 AUG 2026', invoice: 'INV-26-4471', policy: 'Free cancellation until 05 Oct 2026. Refunds settle in 5–7 working days.' },
+  { ref: 'RGL-2610-4468', guest: 'Sarah Jenkins', prop: 'goa', room: 'Courtyard Room', dates: '09—13 OCT', total: '₹79,200', status: 'conf', email: 's.jenkins@example.co.uk', phone: '+44 7700 900 812', src: 'Direct · web', nights: '4', plan: 'Non-refundable', method: 'Card · Visa ••2201', paidOn: '19 AUG 2026', invoice: 'INV-26-4468', policy: 'Non-refundable rate. Refund requires group approval.' },
+  { ref: 'RGL-2701-0192', guest: 'Leena Rao', prop: 'munnar', room: 'Garden Cottage', dates: '04—07 JAN', total: '₹36,000', status: 'pend', email: 'leena.rao@example.in', phone: '+91 99400 77321', src: 'WhatsApp · concierge', nights: '3', plan: 'Half board', method: 'Awaiting bank transfer', paidOn: '—', invoice: 'Not issued', policy: 'Hold expires 30 Aug 2026, 18:00 IST. Room releases automatically.' },
+  { ref: 'RGL-2610-4462', guest: 'Imran Sheikh', prop: 'delhi', room: 'Lutyens Suite', dates: '02—04 OCT', total: '₹41,200', status: 'pend', email: 'imran.s@example.com', phone: '+91 98110 22456', src: 'WhatsApp · concierge', nights: '2', plan: 'Refundable', method: 'Part payment offered', paidOn: '—', invoice: 'Not issued', policy: 'Guest asked to pay 50% now, balance on arrival. Needs approval.' },
+  { ref: 'RGL-2609-4390', guest: 'Elena Rossi', prop: 'alleppey', room: 'Cardamom Room', dates: '22—25 SEP', total: '₹22,848', status: 'conf', email: 'e.rossi@example.it', phone: '+39 333 812 4471', src: 'Direct · web', nights: '3', plan: 'Refundable + b/fast', method: 'UPI · paid in full', paidOn: '11 AUG 2026', invoice: 'INV-26-4390', policy: 'Free cancellation until 15 Sep 2026.' },
+  { ref: 'RGL-2609-4377', guest: 'David Okafor', prop: 'goa', room: 'Banyan Villa', dates: '18—21 SEP', total: '₹64,800', status: 'canc', email: 'd.okafor@example.com', phone: '+234 802 771 0044', src: 'Direct · web', nights: '3', plan: 'Refundable', method: 'Card · Mastercard ••8890', paidOn: '02 AUG 2026', invoice: 'INV-26-4377', policy: 'Cancelled by guest 24 Aug. Refund pending finance run.' },
+  { ref: 'RGL-2609-4361', guest: 'Priya Nair', prop: 'munnar', room: 'Tea Bungalow', dates: '14—17 SEP', total: '₹48,000', status: 'ref', email: 'priya.nair@example.in', phone: '+91 97440 55120', src: 'WhatsApp · concierge', nights: '3', plan: 'Non-refundable', method: 'Refunded to UPI', paidOn: '28 JUL 2026', invoice: 'CRN-26-4361', policy: 'Goodwill refund approved by group. Closed 26 Aug 2026.' },
+  { ref: 'RGL-2611-4503', guest: 'Tom & Ana Beck', prop: 'delhi', room: 'Garden Room', dates: '03—06 NOV', total: '₹33,400', status: 'conf', email: 'beck.family@example.de', phone: '+49 171 220 4471', src: 'Direct · web', nights: '3', plan: 'Refundable + b/fast', method: 'Card · Visa ••7712', paidOn: '26 AUG 2026', invoice: 'INV-26-4503', policy: 'Free cancellation until 27 Oct 2026.' }
+];
+
+const ROOMS_BY_PROP = {
+  alleppey: ['Lake Verandah Suite', 'Cardamom Room', "Merchant's Study", 'Boathouse Cabin', 'Canal Room 1', 'Canal Room 2'],
+  munnar: ['Tea Bungalow', 'Garden Cottage', 'Mist Room', 'Estate Suite', 'Planter Room', 'Ridge Room'],
+  delhi: ['Lutyens Suite', 'Garden Room', 'Library Room', 'Colonnade Room', 'Terrace Room', 'Courtyard Room'],
+  goa: ['Banyan Villa', 'Courtyard Room', 'Pool Suite', 'Verandah Room', 'Chapel Room', 'Palm Room'],
+  all: ['ALP · Lake Verandah', 'ALP · Cardamom', 'MUN · Tea Bungalow', 'DEL · Lutyens Suite', 'GOA · Banyan Villa', 'GOA · Pool Suite']
+};
+
+const RATE_ROWS_ALL = [
+  { name: 'Lake Verandah Suite', house: 'Alleppey', keys: '1', base: '₹8,500', peak: '₹11,900', occ: '92%', state: 'live' },
+  { name: 'Cardamom Room', house: 'Alleppey', keys: '2', base: '₹6,800', peak: '₹9,200', occ: '86%', state: 'live' },
+  { name: 'Tea Bungalow', house: 'Munnar', keys: '2', base: '₹12,000', peak: '₹16,800', occ: '74%', state: 'live' },
+  { name: 'Lutyens Suite', house: 'Delhi', keys: '1', base: '₹15,500', peak: '₹21,000', occ: '81%', state: 'live' },
+  { name: 'Banyan Villa', house: 'Goa', keys: '1', base: '₹18,000', peak: '₹27,500', occ: '68%', state: 'stopped' },
+  { name: 'Pool Suite', house: 'Goa', keys: '2', base: '₹14,200', peak: '₹19,900', occ: '71%', state: 'maint' }
+];
+
+const RATE_ROWS_ONE = [
+  { name: 'Lake Verandah Suite', house: 'Alleppey', keys: '1', base: '₹8,500', peak: '₹11,900', occ: '92%', state: 'live' },
+  { name: 'Cardamom Room', house: 'Alleppey', keys: '2', base: '₹6,800', peak: '₹9,200', occ: '86%', state: 'live' },
+  { name: "Merchant's Study", house: 'Alleppey', keys: '1', base: '₹9,900', peak: '₹13,400', occ: '90%', state: 'live' },
+  { name: 'Boathouse Cabin', house: 'Alleppey', keys: '1', base: '₹11,200', peak: '₹15,100', occ: '78%', state: 'maint' },
+  { name: 'Canal Room', house: 'Alleppey', keys: '2', base: '₹5,900', peak: '₹7,800', occ: '88%', state: 'live' },
+  { name: 'Garden Room', house: 'Alleppey', keys: '2', base: '₹6,200', peak: '₹8,400', occ: '84%', state: 'live' }
+];
+
+const GUESTS_ALL = [
+  { name: 'Arjun Mehta', email: 'arjun.mehta@example.com', city: 'Mumbai', stays: '4', value: '₹1.12L', tag: 'repeat' },
+  { name: 'Sarah Jenkins', email: 's.jenkins@example.co.uk', city: 'London', stays: '2', value: '₹1.48L', tag: 'repeat' },
+  { name: 'Elena Rossi', email: 'e.rossi@example.it', city: 'Milan', stays: '3', value: '₹68,500', tag: 'inhouse' },
+  { name: 'Leena Rao', email: 'leena.rao@example.in', city: 'Chennai', stays: '1', value: '₹36,000', tag: 'plain' },
+  { name: 'Tom & Ana Beck', email: 'beck.family@example.de', city: 'Munich', stays: '2', value: '₹71,200', tag: 'repeat' },
+  { name: 'Imran Sheikh', email: 'imran.s@example.com', city: 'Delhi', stays: '1', value: '₹41,200', tag: 'plain' },
+  { name: 'David Okafor', email: 'd.okafor@example.com', city: 'Lagos', stays: '1', value: '₹64,800', tag: 'plain' }
+];
+
+const INQ_ALL = [
+  { guest: 'Imran Sheikh', phone: '+91 98110 22456', msg: 'Can we pay half now and half at check-in? Two nights, 2–4 October, the Lutyens Suite if it is still open.', meta: 'Delhi · 19h ago · thread of 6', hold: true, holdTime: 'exp. 18:00' },
+  { guest: 'Leena Rao', phone: '+91 99400 77321', msg: 'Confirming the half-board rate for 4–7 January. We are two adults, one child of nine. Is the cot free?', meta: 'Munnar · 4h ago · thread of 3', hold: true, holdTime: '30 Aug' },
+  { guest: 'Meera Krishnan', phone: '+91 98450 11209', msg: 'Two rooms, 30 September to 2 October. One needs to be ground floor — my mother cannot manage stairs.', meta: 'Alleppey · 2h ago · new thread', hold: false, holdTime: '' },
+  { guest: 'Paulo Costa', phone: '+351 912 445 118', msg: 'Travelling with a small dog in November. Is Assagao still dog-friendly and is there a fee?', meta: 'Goa · 26h ago · unanswered', hold: false, holdTime: '' },
+  { guest: 'S. Ramanathan', phone: '+91 94440 78210', msg: 'Arriving Cochin at 22:40 on the 19th. Can the jetty transfer run that late?', meta: 'Alleppey · 6h ago · thread of 2', hold: false, holdTime: '' },
+  { guest: 'A. Whitfield', phone: '+44 7811 220 447', msg: 'What is the difference between the refundable and half-board rates for the Merchant\u2019s Study?', meta: 'Alleppey · 22h ago · unanswered', hold: false, holdTime: '' }
+];
+
+class Component extends DCLogic {
+  state = {
+    page: 'login', role: 'super', scope: 'all',
+    period: 'Today', view: 'list', sel: 'RGL-2610-4471', remember: false
+  };
+
+  componentDidMount() {
+    const next = {};
+    if (this.props.startPage) next.page = this.props.startPage;
+    if (this.props.role) { next.role = this.props.role; next.scope = this.props.role === 'manager' ? 'alleppey' : 'all'; }
+    if (Object.keys(next).length) this.setState(next);
+  }
+
+  nav(page) { this.setState({ page }); if (typeof window !== 'undefined') window.scrollTo(0, 0); }
+
+  renderVals() {
+    const s = this.state;
+    const isSuper = s.role === 'super';
+    const scope = isSuper ? s.scope : 'alleppey';
+    const scopeProp = PROPS.find(p => p.id === scope) || PROPS[0];
+    const allScope = scope === 'all';
+
+    const go = {};
+    ['login', 'dashboard', 'bookings', 'rooms', 'guests', 'inquiries', 'reports', 'settings'].forEach(p => { go[p] = () => this.nav(p); });
+
+    const pageDefs = isSuper
+      ? [['login', 'Login'], ['dashboard', 'Dashboard'], ['bookings', 'Bookings'], ['rooms', 'Rooms & rates'], ['guests', 'Guests'], ['inquiries', 'Inquiries'], ['reports', 'Reports'], ['settings', 'Settings']]
+      : [['login', 'Login'], ['dashboard', 'Dashboard'], ['bookings', 'Bookings'], ['rooms', 'Rooms & rates'], ['guests', 'Guests'], ['inquiries', 'Inquiries'], ['settings', 'Settings']];
+
+    // ---------- role-specific sidebar
+    const navSuper = [
+      { heading: 'Group' },
+      { id: 'dashboard', label: 'Dashboard', icon: 'space_dashboard' },
+      { id: 'reports', label: 'Reports', icon: 'analytics' },
+      { heading: 'Operations' },
+      { id: 'bookings', label: 'Bookings', icon: 'event_note' },
+      { id: 'rooms', label: 'Rooms & rates', icon: 'bed' },
+      { id: 'inquiries', label: 'Inquiries', icon: 'forum' },
+      { heading: 'Records' },
+      { id: 'guests', label: 'Guests', icon: 'group' },
+      { id: 'settings', label: 'Settings', icon: 'settings' }
+    ];
+    const navMgr = [
+      { heading: 'Today' },
+      { id: 'dashboard', label: 'House desk', icon: 'space_dashboard' },
+      { id: 'bookings', label: 'Bookings', icon: 'event_note' },
+      { id: 'inquiries', label: 'Inquiries', icon: 'forum' },
+      { heading: 'This house' },
+      { id: 'rooms', label: 'Rooms & rates', icon: 'bed' },
+      { id: 'guests', label: 'Guests', icon: 'group' },
+      { id: 'settings', label: 'My profile', icon: 'settings' }
+    ];
+    const sideNav = (isSuper ? navSuper : navMgr).map(n => n.heading
+      ? { isHeading: true, isItem: false, label: n.heading, icon: '', on: false, off: false, go: () => {} }
+      : { isHeading: false, isItem: true, label: n.label, icon: n.icon, on: s.page === n.id, off: s.page !== n.id, go: () => this.nav(n.id) }
+    );
+
+    // ---------- KPIs
+    const kpis = (allScope ? [
+      { label: 'Group occupancy', value: '78%', delta: '6 pts', dir: 'up', note: 'vs last wk' },
+      { label: 'Revenue · Aug', value: '₹41.2L', delta: '11%', dir: 'up', note: 'vs Jul' },
+      { label: 'Bookings today', value: '07', delta: '2', dir: 'up', note: 'vs yest.' },
+      { label: 'Pending WhatsApp', value: '09', delta: '3', dir: 'down', note: 'cleared 4' },
+      { label: 'Arr / Dep today', value: '11 / 08', delta: '19 moves', dir: 'flat', note: 'across 4' }
+    ] : isSuper ? [
+      { label: 'Occupancy', value: '89%', delta: '9 pts', dir: 'up', note: 'vs last wk' },
+      { label: 'Revenue · Aug', value: '₹8.9L', delta: '4%', dir: 'up', note: 'vs Jul' },
+      { label: 'Bookings today', value: '02', delta: '1', dir: 'down', note: 'vs yest.' },
+      { label: 'Pending WhatsApp', value: '03', delta: '1', dir: 'down', note: 'cleared 2' },
+      { label: 'Arr / Dep today', value: '04 / 03', delta: '7 moves', dir: 'flat', note: 'this house' }
+    ] : [
+      { label: 'Keys sold tonight', value: '08 / 09', delta: '1 free', dir: 'flat', note: 'Boathouse' },
+      { label: 'Arrivals today', value: '04', delta: '2 before 15:00', dir: 'flat', note: '' },
+      { label: 'Departures today', value: '03', delta: 'all before 11:00', dir: 'flat', note: '' },
+      { label: 'Pending WhatsApp', value: '03', delta: '1', dir: 'down', note: '1 expiring' },
+      { label: 'Rooms to turn', value: '03', delta: 'cut-off 12:00', dir: 'flat', note: '' }
+    ]).map(k => ({ ...k, up: k.dir === 'up', down: k.dir === 'down', flat: k.dir === 'flat' }));
+
+    const pcts = allScope
+      ? [62, 71, 74, 88, 92, 84, 66, 58, 69, 77, 90, 95, 87, 72]
+      : [70, 78, 82, 96, 100, 89, 74, 63, 71, 85, 96, 100, 92, 80];
+    const days = ['28', '29', '30', '31', '01', '02', '03', '04', '05', '06', '07', '08', '09', '10'];
+    const occBars = pcts.map((p, i) => ({ pct: p, day: days[i], h: Math.round(p * 1.15) + 'px', hot: p >= 90, mid: p >= 70 && p < 90, low: p < 70 }));
+
+    const breakdown = allScope ? {
+      title: 'By property · this week',
+      head: ['Property', 'Occ.', 'Revenue', 'Pending'],
+      rows: [
+        { a: 'The Alleppey Ledger', b: '89%', c: '₹8.9L', d: '3' },
+        { a: 'Munnar Estate', b: '74%', c: '₹11.4L', d: '2' },
+        { a: "Lutyens' Haven", b: '81%', c: '₹12.1L', d: '1' },
+        { a: 'Assagao Villa', b: '68%', c: '₹8.8L', d: '3' }
+      ]
+    } : {
+      title: 'By room type · this week',
+      head: ['Room type', 'Keys', 'Revenue', 'Pending'],
+      rows: [
+        { a: 'Lake Verandah Suite', b: '1 / 1', c: '₹2.6L', d: '1' },
+        { a: 'Cardamom Room', b: '2 / 2', c: '₹1.9L', d: '0' },
+        { a: "Merchant's Study", b: '1 / 1', c: '₹2.1L', d: '1' },
+        { a: 'Boathouse Cabin', b: '0 / 1', c: '₹2.3L', d: '1' }
+      ]
+    };
+
+    const movements = [
+      { dir: 'in', time: '13:40', guest: 'Arjun Mehta · 2', room: 'ALP · Lake Verandah' },
+      { dir: 'in', time: '14:10', guest: 'Sarah Jenkins · 2', room: 'GOA · Courtyard' },
+      { dir: 'out', time: '10:00', guest: 'Elena Rossi · 2', room: 'ALP · Cardamom' },
+      { dir: 'in', time: '16:30', guest: 'Tom & Ana Beck · 2', room: 'DEL · Garden Room' },
+      { dir: 'out', time: '11:00', guest: 'K. Sundaram · 3', room: 'MUN · Estate Suite' },
+      { dir: 'in', time: '19:20', guest: 'Nikhil Jain · 1', room: 'MUN · Mist Room' }
+    ].map(m => ({ ...m, arr: m.dir === 'in', dep: m.dir === 'out' }));
+
+    // manager's today sheet
+    const sheetRows = [
+      { room: 'Lake Verandah Suite', guest: 'Arjun Mehta · 2', time: '13:40', st: 'in', note: 'Jetty pickup 13:10' },
+      { room: 'Cardamom Room 1', guest: 'Elena Rossi · 2', time: '10:00', st: 'out', note: 'Invoice emailed' },
+      { room: 'Cardamom Room 2', guest: 'H. & M. Weber · 2', time: '—', st: 'stay', note: 'Night 3 of 5' },
+      { room: "Merchant's Study", guest: 'R. Pillai · 2', time: '15:15', st: 'in', note: 'Late lunch requested' },
+      { room: 'Boathouse Cabin', guest: '—', time: '—', st: 'vacant', note: 'Deck repair until Mon' },
+      { room: 'Canal Room 1', guest: 'J. Fernandes · 2', time: '11:00', st: 'out', note: 'Turn by 12:00' },
+      { room: 'Canal Room 2', guest: 'S. Iyer · 1', time: '—', st: 'stay', note: 'Night 2 of 4' },
+      { room: 'Garden Room 1', guest: 'A. Bose · 2', time: '20:05', st: 'in', note: 'Arriving by train' },
+      { room: 'Garden Room 2', guest: 'D. Menon · 2', time: '—', st: 'stay', note: 'Night 1 of 3' }
+    ].map(r => ({ ...r, isIn: r.st === 'in', isOut: r.st === 'out', isStay: r.st === 'stay', isVacant: r.st === 'vacant' }));
+
+    const waQueue = (allScope ? [
+      { guest: 'Leena Rao', meta: 'Munnar · 04—07 Jan · half board', age: '4h ago', urgent: false },
+      { guest: 'Imran Sheikh', meta: 'Delhi · 02—04 Oct · part payment', age: '19h · expiring', urgent: true },
+      { guest: 'Meera Krishnan', meta: 'Alleppey · 30 Sep—02 Oct · 2 rooms', age: '2h ago', urgent: false },
+      { guest: 'Paulo Costa', meta: 'Goa · 11—14 Nov · dog', age: '26h · unanswered', urgent: true }
+    ] : [
+      { guest: 'Meera Krishnan', meta: '30 Sep—02 Oct · 2 rooms', age: '2h ago', urgent: false },
+      { guest: 'S. Ramanathan', meta: '19—22 Oct · jetty transfer', age: '6h ago', urgent: false },
+      { guest: 'A. Whitfield', meta: '05—08 Nov · rate query', age: '22h · unanswered', urgent: true }
+    ]).map(q => ({ ...q, calm: !q.urgent }));
+
+    // ---------- bookings
+    const visible = BOOKINGS.filter(b => allScope || b.prop === scope);
+    const rows = visible.map(b => ({
+      ref: b.ref, guest: b.guest, room: b.room, dates: b.dates, total: b.total,
+      isConf: b.status === 'conf', isPend: b.status === 'pend', isCanc: b.status === 'canc', isRef: b.status === 'ref',
+      open: () => this.setState({ sel: b.ref })
+    }));
+    const selB = BOOKINGS.find(b => b.ref === s.sel) || visible[0] || BOOKINGS[0];
+    const selProp = PROPS.find(p => p.id === selB.prop) || PROPS[1];
+    const sel = {
+      ref: selB.ref, total: selB.total, policy: selB.policy,
+      isConf: selB.status === 'conf', isPend: selB.status === 'pend', isCanc: selB.status === 'canc', isRef: selB.status === 'ref',
+      groups: [
+        { title: 'Guest', rows: [{ k: 'Name', v: selB.guest }, { k: 'Email', v: selB.email }, { k: 'Phone', v: selB.phone }, { k: 'Source', v: selB.src }] },
+        { title: 'Stay', rows: [{ k: 'Property', v: selProp.name }, { k: 'Room', v: selB.room }, { k: 'Dates', v: selB.dates + ' 2026' }, { k: 'Nights', v: selB.nights }, { k: 'Rate plan', v: selB.plan }] },
+        { title: 'Payment', rows: [{ k: 'Method', v: selB.method }, { k: 'Settled', v: selB.paidOn }, { k: 'Invoice', v: selB.invoice }, { k: 'GST 12%', v: 'included' }] }
+      ]
+    };
+
+    const tapeDays = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14'].map(label => ({ label }));
+    const patterns = [[3, 6, 'conf'], [8, 11, 'pend'], [1, 4, 'conf'], [6, 9, 'conf'], [10, 13, 'pend'], [2, 5, 'conf']];
+    const tapeRows = (ROOMS_BY_PROP[scope] || ROOMS_BY_PROP.all).map((room, ri) => {
+      const p = patterns[ri % patterns.length];
+      const cells = [];
+      for (let d = 0; d < 14; d++) {
+        const busy = (d >= p[0] && d <= p[1]) || (d >= p[0] + 8 && d <= Math.min(13, p[1] + 8));
+        cells.push({
+          conf: busy && p[2] === 'conf', pend: busy && p[2] === 'pend', free: !busy,
+          open: () => this.setState({ sel: visible.length ? visible[ri % visible.length].ref : s.sel })
+        });
+      }
+      return { room, cells };
+    });
+
+    // ---------- rooms & rates
+    const roomsRows = (allScope ? RATE_ROWS_ALL : RATE_ROWS_ONE).map(r => ({
+      ...r, live: r.state === 'live', stopped: r.state === 'stopped', maint: r.state === 'maint'
+    }));
+
+    // ---------- guests
+    const guestRows = (allScope ? GUESTS_ALL : GUESTS_ALL.slice(0, 5)).map(g => ({
+      ...g, inHouse: g.tag === 'inhouse', repeat: g.tag === 'repeat', plain: g.tag === 'plain'
+    }));
+
+    // ---------- inquiries
+    const inqRows = allScope ? INQ_ALL : INQ_ALL.filter(q => q.meta.indexOf('Alleppey') === 0 || q.meta.indexOf('Alleppey') > -1);
+
+    return {
+      showPager: this.props.showPrototypePager !== false,
+      roleTag: isSuper ? 'Super admin' : 'Property manager',
+      pages: pageDefs.map(([id, label]) => ({ label, active: s.page === id, idle: s.page !== id, go: go[id] })),
+      go,
+      pLogin: s.page === 'login',
+      inApp: s.page !== 'login',
+      pDashboard: s.page === 'dashboard',
+      pBookings: s.page === 'bookings',
+      pRooms: s.page === 'rooms',
+      pGuests: s.page === 'guests',
+      pInquiries: s.page === 'inquiries',
+      pReports: s.page === 'reports' && isSuper,
+      pSettings: s.page === 'settings',
+
+      remembered: s.remember, notRemembered: !s.remember,
+      toggleRemember: () => this.setState({ remember: !s.remember }),
+      roleChips: [
+        { label: 'Super admin', active: isSuper, idle: !isSuper, go: () => this.setState({ role: 'super', scope: 'all' }) },
+        { label: 'Property manager', active: !isSuper, idle: isSuper, go: () => this.setState({ role: 'manager', scope: 'alleppey' }) }
+      ],
+      roleHint: isSuper
+        ? 'All four houses, group reports, rate control and refunds.'
+        : 'The Alleppey Ledger only. No group reports, no refunds without approval.',
+
+      isSuper, isManager: !isSuper,
+      sideNav,
+      propSwitcher: PROPS.map(p => ({ label: p.label, on: scope === p.id, off: scope !== p.id, go: () => this.setState({ scope: p.id }) })),
+      shiftStrip: [{ k: 'in house', v: '08/09' }, { k: 'arrivals', v: '04' }, { k: 'to turn', v: '03' }],
+      primaryAction: isSuper ? '+ New booking' : '+ Walk-in',
+      userName: isSuper ? 'Nandita Roy' : 'Sanjay Varma',
+      userRole: isSuper ? 'Super admin · group' : 'Manager · Alleppey',
+
+      dashTitle: isSuper ? (allScope ? 'Group overview' : scopeProp.name) : 'House desk',
+      dashSub: isSuper
+        ? (allScope ? '4 properties · 40 keys · Fri 28 Aug 2026' : '9 keys · ' + scopeProp.name)
+        : 'The Alleppey Ledger · 9 keys · Fri 28 Aug 2026',
+      periodChips: ['Today', 'This week', 'This month'].map(label => ({ label, active: s.period === label, idle: s.period !== label, go: () => this.setState({ period: label }) })),
+      kpis, occBars,
+      breakdownTitle: breakdown.title,
+      breakdownHead: breakdown.head.map(label => ({ label })),
+      breakdownRows: breakdown.rows,
+      movements, waQueue,
+      waCount: allScope ? '09' : '03',
+      sheetHead: ['Room', 'Guest', 'Time', 'State', 'Note'].map(label => ({ label })),
+      sheetRows,
+
+      bookingsSub: allScope ? 'All properties · ' + rows.length + ' records' : scopeProp.name + ' · ' + rows.length + ' records',
+      viewToggle: [
+        { label: 'List', on: s.view === 'list', off: s.view !== 'list', go: () => this.setState({ view: 'list' }) },
+        { label: 'Calendar', on: s.view === 'cal', off: s.view !== 'cal', go: () => this.setState({ view: 'cal' }) }
+      ],
+      listView: s.view === 'list', calView: s.view === 'cal',
+      listHead: ['Ref', 'Guest', 'Room', 'Dates', 'Total', 'Status'].map(label => ({ label })),
+      rows,
+      rowCount: rows.length + ' bookings · sorted by check-in',
+      tapeDays, tapeRows,
+      drawerOpen: !!sel.ref,
+      sel,
+      canRefund: isSuper,
+      mustRequest: !isSuper,
+      closeDrawer: () => this.setState({ sel: null }),
+
+      roomsSub: allScope ? '4 houses · 40 keys · 12 room types' : scopeProp.name + ' · 9 keys · 6 room types',
+      ratesAction: isSuper ? 'Bulk rate update' : 'Request rate change',
+      roomsHead: ['Room type', 'House', 'Keys', 'Base', 'Peak', 'Occ. 30d', 'State'].map(label => ({ label })),
+      roomsRows,
+      ratePlans: [
+        { name: 'Fully refundable', terms: 'Free cancel 7 days out', mult: 'base', share: '41% of nights' },
+        { name: 'Refundable + half board', terms: 'Breakfast and dinner', mult: '+₹1,900 pp', share: '22%' },
+        { name: 'Non-refundable', terms: 'No changes once paid', mult: '−15%', share: '29%' },
+        { name: 'Long stay · 7+ nights', terms: 'Weekly rate, WhatsApp only', mult: '−22%', share: '8%' }
+      ],
+      seasons: [
+        { name: 'Monsoon', range: '15 Jun — 31 Aug', adj: '−20%' },
+        { name: 'Shoulder', range: '01 Sep — 14 Dec', adj: 'base' },
+        { name: 'Peak', range: '15 Dec — 15 Jan', adj: '+40%' },
+        { name: 'Annual closure', range: '01 — 14 Jun', adj: 'closed' }
+      ],
+
+      guestsSub: allScope ? 'Group register · 2,340 guests · 41% repeat' : scopeProp.name + ' · 612 guests · 38% repeat',
+      guestsHead: ['Name', 'Email', 'City', 'Stays', 'Lifetime', 'Tag'].map(label => ({ label })),
+      guestRows,
+
+      inqSub: allScope ? 'All houses · WhatsApp concierge' : scopeProp.name + ' · WhatsApp concierge',
+      inqStats: allScope
+        ? [{ k: 'Open threads', v: '09' }, { k: 'Median reply', v: '38m' }, { k: 'Holds expiring', v: '02' }, { k: 'Converted · Aug', v: '64%' }]
+        : [{ k: 'Open threads', v: '03' }, { k: 'Median reply', v: '22m' }, { k: 'Holds expiring', v: '01' }, { k: 'Converted · Aug', v: '71%' }],
+      inqRows,
+
+      reportHead: ['House', 'Revenue', 'Occ.', 'ADR', 'RevPAR', 'Direct'].map(label => ({ label })),
+      reportRows: [
+        { house: 'The Alleppey Ledger', rev: '₹8.9L', occ: '89%', adr: '₹9,100', revpar: '₹8,099', direct: '96%' },
+        { house: 'Munnar Estate', rev: '₹11.4L', occ: '74%', adr: '₹13,800', revpar: '₹10,212', direct: '88%' },
+        { house: "Lutyens' Haven", rev: '₹12.1L', occ: '81%', adr: '₹16,200', revpar: '₹13,122', direct: '84%' },
+        { house: 'Assagao Villa', rev: '₹8.8L', occ: '68%', adr: '₹19,400', revpar: '₹13,192', direct: '94%' }
+      ],
+      revBars: [
+        { m: 'JAN', v: '52', h: '124px' }, { m: 'FEB', v: '48', h: '114px' }, { m: 'MAR', v: '41', h: '98px' },
+        { m: 'APR', v: '33', h: '79px' }, { m: 'MAY', v: '29', h: '69px' }, { m: 'JUN', v: '24', h: '57px' },
+        { m: 'JUL', v: '37', h: '88px' }, { m: 'AUG', v: '41', h: '98px' }
+      ],
+      channels: [
+        { name: 'Direct · web', pct: '61%' }, { name: 'Direct · WhatsApp', pct: '30%' },
+        { name: 'Repeat guest', pct: '6%' }, { name: 'Referral', pct: '3%' }
+      ],
+
+      settingsSub: isSuper ? 'Group settings · roles, policies, integrations' : 'Your profile and house preferences',
+      teamTitle: isSuper ? 'Team & access' : 'Your access',
+      teamHead: ['Name', 'Email', 'Scope', 'Role'].map(label => ({ label })),
+      team: (isSuper ? [
+        { name: 'Nandita Roy', email: 'n.roy@regale.in', scope: 'All properties', r: 'super' },
+        { name: 'Sanjay Varma', email: 's.varma@regale.in', scope: 'Alleppey', r: 'mgr' },
+        { name: 'Leela Thomas', email: 'l.thomas@regale.in', scope: 'Munnar', r: 'mgr' },
+        { name: 'Imran Qureshi', email: 'i.qureshi@regale.in', scope: 'Delhi', r: 'mgr' },
+        { name: 'Anjali Pillai', email: 'a.pillai@regale.in', scope: 'Alleppey', r: 'desk' }
+      ] : [
+        { name: 'Sanjay Varma', email: 's.varma@regale.in', scope: 'Alleppey', r: 'mgr' },
+        { name: 'Anjali Pillai', email: 'a.pillai@regale.in', scope: 'Alleppey', r: 'desk' }
+      ]).map(t => ({ ...t, isSuper: t.r === 'super', isMgr: t.r === 'mgr', isDesk: t.r === 'desk' })),
+      settingGroups: isSuper ? [
+        { title: 'Booking policy', items: [
+          { label: 'WhatsApp hold window', hint: 'How long a room is held', value: '12 hours' },
+          { label: 'Free cancellation', hint: 'Default refundable rates', value: '7 days out' },
+          { label: 'Refund approval', hint: 'Above this, group signs off', value: '₹10,000' },
+          { label: 'Guest checkout', hint: 'Account optional at booking', value: 'On' }
+        ] },
+        { title: 'Integrations', items: [
+          { label: 'Payment gateway', hint: 'Card, UPI, netbanking', value: 'Live' },
+          { label: 'WhatsApp Business', hint: '4 numbers, one per house', value: 'Connected' },
+          { label: 'GST invoicing', hint: 'Auto-issue on payment', value: '12% · on' },
+          { label: 'Channel manager', hint: 'OTA sync', value: 'Off · direct only' }
+        ] }
+      ] : [
+        { title: 'This house', items: [
+          { label: 'Check-in window', hint: 'Shown to guests', value: '14:00 — 22:00' },
+          { label: 'Housekeeping cut-off', hint: 'Turn deadline', value: '12:00' },
+          { label: 'Jetty transfer', hint: 'Included in all rates', value: 'On' },
+          { label: 'Stop sell', hint: 'You may stop sell 48h out', value: 'Allowed' }
+        ] },
+        { title: 'Notifications', items: [
+          { label: 'New WhatsApp inquiry', hint: 'Push to your phone', value: 'Instant' },
+          { label: 'Hold expiring', hint: 'Before auto-release', value: '2h before' },
+          { label: 'Daily sheet', hint: 'Emailed each morning', value: '06:30 IST' },
+          { label: 'Group announcements', hint: 'From the group desk', value: 'On' }
+        ] }
+      ]
+    };
+  }
+}
+
+</script>
+</body>
+</html>
