@@ -20,3 +20,11 @@ npm-debug.log*
 # --- OS / editor ---
 .DS_Store
 Thumbs.db
+
+# --- local-only planning docs (not part of the shipped repo) ---
+/API.md
+/DATABASE.md
+/DESIGN.md
+/DEVELOPMENT.md
+/PRD.md
+/STACK_DECISION.md
