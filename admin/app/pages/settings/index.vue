@@ -59,6 +59,103 @@ async function createUser() {
     userMsg.value = extractErrorMessage(e, "Could not create account.");
   }
 }
+
+// ---------- About page content ----------
+interface AboutValue {
+  title: string;
+  body: string;
+}
+interface AboutContent {
+  headline?: string;
+  intro?: string;
+  story?: string;
+  values?: AboutValue[];
+}
+
+// Mirrors the guest site's fallback copy (frontend/app/pages/about.vue) so the
+// form starts pre-filled with what's actually showing, not a blank page.
+const ABOUT_DEFAULTS: Required<AboutContent> = {
+  headline: "Four houses, one ledger",
+  intro:
+    "Regale began with a single restoration — a spice merchant's home on Lake Vembanad, saved from demolition and reopened as a nine-room house. What we learned there, about patience with old buildings and about letting a place keep its own character, shaped every property since.",
+  story:
+    "Each of our four houses is restored rather than built, staffed by people from the town it sits in, and run with the same conviction: a hotel should feel like being let into somewhere real, not checked into somewhere generic.",
+  values: [
+    {
+      title: "Restoration, not construction",
+      body: "Every Regale property was a building before it was a hotel. We keep the walls, the floors, and the stories, and add only what a guest genuinely needs.",
+    },
+    {
+      title: "Local, always",
+      body: "Every host lives in the town the house sits in. There's no regional manager between you and the person who greets you at the door.",
+    },
+    {
+      title: "Direct, on principle",
+      body: "We'd rather answer your questions ourselves — on WhatsApp, at the price we actually charge — than have an aggregator stand between us.",
+    },
+  ],
+};
+
+const about = ref<Required<AboutContent>>(structuredClone(ABOUT_DEFAULTS));
+const aboutMsg = ref("");
+const savingAbout = ref(false);
+
+const { data: fetchedAbout, pending: aboutPending } = useAsyncData<AboutContent>(
+  "settings-about",
+  () => request<AboutContent>("/api/content/about"),
+  { lazy: true }
+);
+watch(
+  fetchedAbout,
+  (data) => {
+    if (!data) return;
+    about.value = {
+      headline: data.headline || ABOUT_DEFAULTS.headline,
+      intro: data.intro || ABOUT_DEFAULTS.intro,
+      story: data.story || ABOUT_DEFAULTS.story,
+      values: data.values?.length ? data.values : structuredClone(ABOUT_DEFAULTS.values),
+    };
+  },
+  { immediate: true }
+);
+
+function addValue() {
+  if (about.value.values.length >= 6) return;
+  about.value.values.push({ title: "", body: "" });
+}
+function removeValue(i: number) {
+  about.value.values.splice(i, 1);
+}
+
+async function saveAbout() {
+  aboutMsg.value = "";
+  const a = about.value;
+  if (!a.headline.trim() || !a.intro.trim() || !a.story.trim()) {
+    aboutMsg.value = "Headline, intro, and story can't be blank.";
+    return;
+  }
+  if (a.values.some((v) => !v.title.trim() || !v.body.trim())) {
+    aboutMsg.value = "Every value needs both a title and a body (or remove it).";
+    return;
+  }
+  savingAbout.value = true;
+  try {
+    await request("/api/admin/content/about", {
+      method: "POST",
+      body: {
+        headline: a.headline.trim(),
+        intro: a.intro.trim(),
+        story: a.story.trim(),
+        values: a.values.map((v) => ({ title: v.title.trim(), body: v.body.trim() })),
+      },
+    });
+    aboutMsg.value = "Saved.";
+  } catch (e: any) {
+    aboutMsg.value = extractErrorMessage(e, "Could not save changes.");
+  } finally {
+    savingAbout.value = false;
+  }
+}
 </script>
 
 <template>
@@ -96,6 +193,64 @@ async function createUser() {
           Create account
         </button>
         <p v-if="userMsg" class="text-sm mt-3">{{ userMsg }}</p>
+      </div>
+    </section>
+
+    <section class="mb-10">
+      <h2 class="font-label-ledger text-xs tracking-[0.1em] uppercase text-outline mb-3">About page content</h2>
+      <div class="border border-outline/20 bg-white p-6 max-w-[720px]">
+        <div v-if="aboutPending" class="flex flex-col gap-3">
+          <Skeleton class="h-9 w-full" />
+          <Skeleton class="h-20 w-full" />
+          <Skeleton class="h-20 w-full" />
+        </div>
+        <div v-else class="flex flex-col gap-5">
+          <div class="flex flex-col gap-1.5">
+            <label class="font-label-ledger text-[11px] uppercase text-outline">Headline</label>
+            <input v-model="about.headline" maxlength="200" class="border-b border-secondary bg-transparent py-2" />
+          </div>
+          <div class="flex flex-col gap-1.5">
+            <label class="font-label-ledger text-[11px] uppercase text-outline">Intro paragraph</label>
+            <textarea v-model="about.intro" rows="3" maxlength="1500" class="border-b border-secondary bg-transparent py-2 resize-y" />
+          </div>
+          <div class="flex flex-col gap-1.5">
+            <label class="font-label-ledger text-[11px] uppercase text-outline">Story paragraph</label>
+            <textarea v-model="about.story" rows="3" maxlength="1500" class="border-b border-secondary bg-transparent py-2 resize-y" />
+          </div>
+
+          <div>
+            <div class="flex justify-between items-center mb-2">
+              <label class="font-label-ledger text-[11px] uppercase text-outline">Values</label>
+              <button
+                v-if="about.values.length < 6"
+                class="text-xs font-label-ledger uppercase text-secondary border border-outline/25 rounded-sm px-2.5 py-1"
+                @click="addValue"
+              >
+                + Add value
+              </button>
+            </div>
+            <div v-for="(v, i) in about.values" :key="i" class="border border-outline/15 p-4 mb-3 flex flex-col gap-2">
+              <div class="flex gap-2 items-center">
+                <input v-model="v.title" placeholder="Title" maxlength="100" class="border-b border-secondary bg-transparent py-1.5 flex-1" />
+                <button class="text-xs font-label-ledger uppercase text-error border border-error/40 rounded-sm px-2 py-1" @click="removeValue(i)">
+                  Remove
+                </button>
+              </div>
+              <textarea v-model="v.body" placeholder="Body" rows="2" maxlength="500" class="border-b border-secondary bg-transparent py-1.5 resize-y" />
+            </div>
+          </div>
+
+          <div>
+            <button
+              :disabled="savingAbout"
+              class="bg-primary text-white border-none cursor-pointer px-5 py-2.5 rounded-sm font-label-ledger text-xs uppercase disabled:opacity-50"
+              @click="saveAbout"
+            >
+              {{ savingAbout ? "Saving…" : "Save about page" }}
+            </button>
+            <p v-if="aboutMsg" class="text-sm mt-3">{{ aboutMsg }}</p>
+          </div>
+        </div>
       </div>
     </section>
 

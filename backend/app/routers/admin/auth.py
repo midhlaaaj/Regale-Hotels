@@ -1,8 +1,16 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Response, status
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.security import create_access_token, get_current_admin, verify_password, AdminClaims
+from app.core.security import (
+    clear_session_cookies,
+    create_access_token,
+    enforce_login_rate_limit,
+    get_current_admin,
+    set_session_cookies,
+    verify_password,
+    AdminClaims,
+)
 from app.db import get_session
 from app.models import User
 from app.schemas.admin import AdminLoginRequest, AdminLoginResponse
@@ -10,17 +18,24 @@ from app.schemas.admin import AdminLoginRequest, AdminLoginResponse
 router = APIRouter(prefix="/api/admin", tags=["admin-auth"])
 
 
-@router.post("/login", response_model=AdminLoginResponse)
-async def login(payload: AdminLoginRequest, session: AsyncSession = Depends(get_session)):
+@router.post("/login", response_model=AdminLoginResponse, dependencies=[Depends(enforce_login_rate_limit)])
+async def login(payload: AdminLoginRequest, response: Response, session: AsyncSession = Depends(get_session)):
     result = await session.execute(select(User).where(User.email == payload.email))
     user = result.scalar_one_or_none()
     if not user or not verify_password(payload.password, user.password_hash):
         raise HTTPException(status.HTTP_401_UNAUTHORIZED, "Invalid email or password")
+    if not user.is_active:
+        raise HTTPException(status.HTTP_401_UNAUTHORIZED, "Invalid email or password")
 
     token = create_access_token(user_id=user.id, role=user.role, property_id=user.property_id)
-    return AdminLoginResponse(
-        access_token=token, role=user.role, property_id=user.property_id, name=user.name
-    )
+    set_session_cookies(response, token)
+    return AdminLoginResponse(role=user.role, property_id=user.property_id, name=user.name)
+
+
+@router.post("/logout")
+async def logout(response: Response):
+    clear_session_cookies(response)
+    return {"ok": True}
 
 
 @router.get("/me")

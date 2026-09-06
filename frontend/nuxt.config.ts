@@ -16,7 +16,11 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     public: {
-      apiBase: process.env.NUXT_PUBLIC_API_BASE || "http://127.0.0.1:8000",
+      // Must share a registrable domain with the dev server's own origin
+      // (both "localhost") — the guest session cookie is SameSite=Lax, which
+      // browsers only attach to same-site fetches. 127.0.0.1 and localhost
+      // count as different sites even though they resolve to the same host.
+      apiBase: process.env.NUXT_PUBLIC_API_BASE || "http://localhost:8000",
       // Placeholder — not a real registered WhatsApp Business number. Replace via
       // NUXT_PUBLIC_WHATSAPP_NUMBER before this goes anywhere near production.
       whatsappNumber: process.env.NUXT_PUBLIC_WHATSAPP_NUMBER || "919999999999",

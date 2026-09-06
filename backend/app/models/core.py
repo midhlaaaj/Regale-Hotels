@@ -58,3 +58,25 @@ class Availability(SQLModel, table=True):
     room_type_id: int = Field(foreign_key="room_types.id", index=True)
     date: date_ = Field(index=True)
     rooms_available: int
+
+
+class Package(SQLModel, table=True):
+    """A fixed-duration stay bundle (e.g. "5 nights, 4 days, all meals") priced
+    as a whole rather than composed from RatePlan/Availability — staff enter
+    these by hand, they aren't derived from the nightly booking engine."""
+
+    __tablename__ = "packages"
+
+    id: int | None = Field(default=None, primary_key=True)
+    property_id: int = Field(foreign_key="properties.id", index=True)
+    name: str
+    nights: int
+    description: str
+    price: Decimal = Field(max_digits=10, decimal_places=2)
+    meal_plan: str
+    rooms_included: int = 1
+    max_guests: int
+    cover_image_url: str | None = None
+    active: bool = Field(default=True, index=True)
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    updated_at: datetime = Field(default_factory=datetime.utcnow)

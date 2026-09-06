@@ -22,6 +22,7 @@ class User(SQLModel, table=True):
     password_hash: str
     role: UserRole
     property_id: int | None = Field(default=None, foreign_key="properties.id")
+    is_active: bool = Field(default=True)
     created_at: datetime = Field(default_factory=datetime.utcnow)
 
 

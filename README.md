@@ -1,11 +1,11 @@
 # Regale Hotels
 
-A portfolio project: a multi-property hotel booking platform for a fictional Indian hotel group (Alleppey, Munnar, Delhi, Goa), with online payments, WhatsApp inquiry, and a single role-based admin panel.
+A portfolio project: a multi-property hotel booking platform for a fictional Indian hotel group, currently operating only in Kerala (Alleppey, Munnar, Kochi, Varkala), with online payments, WhatsApp inquiry, and a single role-based admin panel.
 
 ## Quick facts
 
 - **Stack:** Nuxt 3 (Vue) frontend, FastAPI (Python) backend over REST, Neon (serverless Postgres) via SQLAlchemy (async)/SQLModel + asyncpg, Pinia, Razorpay
-- **Properties modeled:** 4 — Alleppey (Kerala), Munnar (Kerala), New Delhi, North Goa
+- **Properties modeled:** 4, all in Kerala — Alleppey, Munnar, Kochi, Varkala. The `state` field on a property is free text (not restricted to Kerala), so the admin panel can already onboard a property in another state without any code change.
 - **Admin model:** one app, two roles — super admin (all properties) and property manager (scoped to one property)
 - **Booking:** guest checkout by default, optional post-booking account; every room shows both "pay online" and "WhatsApp inquire" as parallel options
 

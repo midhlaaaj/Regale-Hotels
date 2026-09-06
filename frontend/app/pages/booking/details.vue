@@ -2,6 +2,7 @@
 import type { Booking, BookingCreatePayload } from "~/types/api";
 
 const bookingStore = useBookingStore();
+const guestAuth = useGuestAuthStore();
 const router = useRouter();
 const { request } = useApi();
 
@@ -9,7 +10,14 @@ if (!bookingStore.roomType || !bookingStore.ratePlan) {
   router.replace("/properties");
 }
 
-const acct = ref(false);
+// Prefill from the signed-in guest's saved profile — still editable, and the
+// booking still links by email either way (no server-side trust placed on this).
+if (guestAuth.profile) {
+  if (!bookingStore.guest.name) bookingStore.guest.name = guestAuth.profile.name;
+  if (!bookingStore.guest.email) bookingStore.guest.email = guestAuth.profile.email;
+  if (!bookingStore.guest.phone) bookingStore.guest.phone = guestAuth.profile.phone;
+}
+
 const submitting = ref(false);
 const errorMsg = ref("");
 
@@ -61,7 +69,12 @@ async function submit() {
       check_out: bookingStore.checkOut!,
       guests_count: bookingStore.guestsCount,
       payment_method: bookingStore.paymentMethod,
-      guest: bookingStore.guest,
+      guest: {
+        name: bookingStore.guest.name,
+        email: bookingStore.guest.email,
+        phone: bookingStore.guest.phone,
+        ...(bookingStore.guest.id_document_url.trim() ? { id_document_url: bookingStore.guest.id_document_url.trim() } : {}),
+      },
     };
     const booking = await request<Booking>("/api/bookings", { method: "POST", body: payload });
     bookingStore.result = booking;
@@ -128,20 +141,19 @@ async function submit() {
             />
             <span class="text-[13px] text-outline">For arrival coordination on WhatsApp.</span>
           </div>
-        </div>
-
-        <div class="border-t border-outline/20 mt-8 pt-5 flex gap-3 items-start">
-          <button
-            class="w-5 h-5 flex-shrink-0 mt-0.5 cursor-pointer rounded-sm p-0 flex items-center justify-center bg-transparent border border-outline"
-            @click="acct = !acct"
-          >
-            <span v-if="acct" class="block w-5 h-5 -m-px bg-primary text-white text-[13px] leading-5 text-center rounded-sm">✓</span>
-          </button>
-          <div>
-            <p class="text-[15px] text-on-background mb-0.5">Create an account to see this booking later</p>
-            <p class="text-[13px] text-outline">We'll email a set-password link after your stay is confirmed. Optional.</p>
+          <div class="flex flex-col gap-1.5">
+            <label class="font-label-ledger text-[11px] tracking-[0.14em] uppercase text-secondary">ID proof link (optional)</label>
+            <input
+              v-model="bookingStore.guest.id_document_url"
+              type="url"
+              placeholder="Link to a passport / govt ID scan"
+              maxlength="2000"
+              class="ledger-line bg-transparent py-2 text-body-md"
+            />
+            <span class="text-[13px] text-outline">Speeds up check-in. You can also share this at the property.</span>
           </div>
         </div>
+
         <p v-if="errorMsg" class="text-error text-sm mt-5">{{ errorMsg }}</p>
       </div>
 

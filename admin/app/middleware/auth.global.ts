@@ -1,12 +1,12 @@
 export default defineNuxtRouteMiddleware((to) => {
   if (!import.meta.client) return;
   const auth = useAuthStore();
-  if (!auth.token) auth.restore();
+  if (!auth.role) auth.restore();
 
-  if (to.path !== "/login" && !auth.token) {
+  if (to.path !== "/login" && !auth.role) {
     return navigateTo("/login");
   }
-  if (to.path === "/login" && auth.token) {
+  if (to.path === "/login" && auth.role) {
     return navigateTo("/");
   }
   // Client-side convenience only — the real enforcement lives server-side

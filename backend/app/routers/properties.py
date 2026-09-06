@@ -11,13 +11,28 @@ router = APIRouter(prefix="/api/properties", tags=["properties"])
 @router.get("")
 async def list_properties(
     city: str | None = Query(default=None, max_length=100),
+    limit: int = Query(default=50, ge=1, le=100),
+    offset: int = Query(default=0, ge=0),
     session: AsyncSession = Depends(get_session),
 ):
-    query = select(Property)
+    query = select(Property).limit(limit).offset(offset)
     if city:
         query = query.where(Property.city == city)
     result = await session.execute(query)
-    return result.scalars().all()
+    properties = result.scalars().all()
+    if not properties:
+        return []
+
+    # Attach each property's room types (guest count / from-price both depend on
+    # this on the list view) — same shape as the single-property endpoint below.
+    rooms_result = await session.execute(
+        select(RoomType).where(RoomType.property_id.in_([p.id for p in properties]))
+    )
+    rooms_by_property: dict[int, list[dict]] = {}
+    for r in rooms_result.scalars().all():
+        rooms_by_property.setdefault(r.property_id, []).append({**r.model_dump(), "base_price": float(r.base_price)})
+
+    return [{**p.model_dump(), "room_types": rooms_by_property.get(p.id, [])} for p in properties]
 
 
 @router.get("/{slug}")

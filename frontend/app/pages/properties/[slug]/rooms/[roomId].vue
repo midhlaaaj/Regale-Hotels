@@ -28,9 +28,16 @@ const in7 = new Date(today.getTime() + 7 * 86400000);
 const in9 = new Date(today.getTime() + 9 * 86400000);
 const toISO = (d: Date) => d.toISOString().slice(0, 10);
 
-const checkIn = ref(toISO(in7));
-const checkOut = ref(toISO(in9));
-const guestsCount = ref(2);
+// Prefill from the guest's search (homepage/properties list) when they arrived with one.
+const checkIn = ref((route.query.check_in as string) || toISO(in7));
+const checkOut = ref((route.query.check_out as string) || toISO(in9));
+const guestsCount = ref(Number(route.query.guests) || 2);
+
+watchEffect(() => {
+  if (room.value && guestsCount.value > room.value.max_occupancy) {
+    guestsCount.value = room.value.max_occupancy;
+  }
+});
 
 const { data: availability, pending: availabilityPending } = useAsyncData<RoomAvailability>(
   `room-availability-${roomId}`,

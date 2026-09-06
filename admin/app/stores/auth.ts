@@ -3,23 +3,25 @@ import { defineStore } from "pinia";
 export type Role = "super_admin" | "property_manager";
 
 interface AuthState {
-  token: string | null;
   role: Role | null;
   propertyId: number | null;
   name: string | null;
 }
 
-const STORAGE_KEY = "regale_admin_auth";
+const STORAGE_KEY = "regale_admin_profile";
 
 export const useAuthStore = defineStore("auth", {
-  state: (): AuthState => ({ token: null, role: null, propertyId: null, name: null }),
+  state: (): AuthState => ({ role: null, propertyId: null, name: null }),
   getters: {
     isSuperAdmin: (s) => s.role === "super_admin",
-    isLoggedIn: (s) => !!s.token,
+    // The JWT itself lives in an httpOnly cookie the JS layer never sees — this
+    // flag is only a UI convenience (avoids a login-page flash on refresh) and
+    // is not the real auth gate. The backend rejects any request whose cookie
+    // is missing or expired, and the 401 interceptor in useApi clears this.
+    isLoggedIn: (s) => !!s.role,
   },
   actions: {
-    setSession(session: { access_token: string; role: Role; property_id: number | null; name: string }) {
-      this.token = session.access_token;
+    setSession(session: { role: Role; property_id: number | null; name: string }) {
       this.role = session.role;
       this.propertyId = session.property_id;
       this.name = session.name;
@@ -37,7 +39,7 @@ export const useAuthStore = defineStore("auth", {
         localStorage.removeItem(STORAGE_KEY);
       }
     },
-    logout() {
+    clear() {
       this.$reset();
       if (import.meta.client) localStorage.removeItem(STORAGE_KEY);
     },

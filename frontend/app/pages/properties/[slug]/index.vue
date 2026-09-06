@@ -6,6 +6,15 @@ const slug = route.params.slug as string;
 const { request } = useApi();
 const { link: whatsappLink } = useWhatsapp();
 
+// Carried forward from the homepage/properties search, if the guest arrived with one.
+const searchQuery = computed(() => {
+  const query: Record<string, string> = {};
+  if (route.query.check_in) query.check_in = String(route.query.check_in);
+  if (route.query.check_out) query.check_out = String(route.query.check_out);
+  if (route.query.guests) query.guests = String(route.query.guests);
+  return query;
+});
+
 const { data: property, pending } = useAsyncData(
   `property-${slug}`,
   () => request<Property>(`/api/properties/${slug}`),
@@ -173,7 +182,7 @@ const stats = computed(() => {
         <NuxtLink
           v-for="r in property.room_types"
           :key="r.id"
-          :to="`/properties/${property.slug}/rooms/${r.id}`"
+          :to="{ path: `/properties/${property.slug}/rooms/${r.id}`, query: searchQuery }"
           class="cursor-pointer border-b border-outline/15 py-5 flex flex-wrap gap-5 items-center hover:bg-surface-container-low transition-colors"
         >
           <img

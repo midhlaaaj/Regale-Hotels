@@ -74,11 +74,15 @@ async function saveEdit(room: RoomType) {
 
 // ---------- New property ----------
 const showNewProperty = ref(false);
+// Kerala is the default since that's where we operate today, but the field
+// stays free text — nothing here blocks onboarding a property in another
+// state when the group expands.
+const INDIAN_STATE_SUGGESTIONS = ["Kerala", "Goa", "Karnataka", "Tamil Nadu", "Delhi", "Maharashtra", "Rajasthan"];
 const newProperty = ref({
   name: "",
   slug: "",
   city: "",
-  state: "",
+  state: "Kerala",
   description: "",
   cover_image_url: "",
   amenities: "",
@@ -117,7 +121,7 @@ async function createProperty() {
           .filter(Boolean),
       },
     });
-    newProperty.value = { name: "", slug: "", city: "", state: "", description: "", cover_image_url: "", amenities: "" };
+    newProperty.value = { name: "", slug: "", city: "", state: "Kerala", description: "", cover_image_url: "", amenities: "" };
     slugTouched.value = false;
     showNewProperty.value = false;
     await refreshProperties();
@@ -139,6 +143,42 @@ function openNewRoom(propertyId: number) {
   newRoom.value = { name: "", description: "", max_occupancy: 2, base_price: 5000, images: "" };
   newRoomError.value = "";
 }
+
+// ---------- Delete ----------
+const deleteBusy = ref<number | null>(null);
+const deleteError = ref<Record<string, string>>({});
+
+async function deleteProperty(p: Property) {
+  if (!confirm(`Delete "${p.name}" and all of its room types? This cannot be undone.`)) return;
+  deleteBusy.value = p.id;
+  deleteError.value.property = "";
+  try {
+    await request(`/api/admin/properties/${p.id}`, { method: "DELETE" });
+    await refreshProperties();
+  } catch (e: any) {
+    deleteError.value.property = extractErrorMessage(e, "Could not delete this property — it may have existing bookings.");
+  } finally {
+    deleteBusy.value = null;
+  }
+}
+
+async function deleteRoomType(room: RoomType) {
+  if (!confirm(`Delete "${room.name}"? This cannot be undone.`)) return;
+  deleteBusy.value = room.id;
+  deleteError.value[room.id] = "";
+  try {
+    await request(`/api/admin/room-types/${room.id}`, { method: "DELETE" });
+    if (managing.value === room.id) managing.value = null;
+    await loadRooms(room.property_id);
+  } catch (e: any) {
+    deleteError.value[room.id] = extractErrorMessage(e, "Could not delete this room type — it may have existing bookings.");
+  } finally {
+    deleteBusy.value = null;
+  }
+}
+
+// ---------- Manage rate plans / availability ----------
+const managing = ref<number | null>(null);
 
 async function createRoomType(propertyId: number) {
   newRoomError.value = "";
@@ -204,7 +244,16 @@ async function createRoomType(propertyId: number) {
           @input="slugTouched = true"
         />
         <input v-model="newProperty.city" placeholder="City" maxlength="100" class="border-b border-secondary bg-transparent py-2" />
-        <input v-model="newProperty.state" placeholder="State" maxlength="100" class="border-b border-secondary bg-transparent py-2" />
+        <input
+          v-model="newProperty.state"
+          placeholder="State"
+          maxlength="100"
+          list="state-suggestions"
+          class="border-b border-secondary bg-transparent py-2"
+        />
+        <datalist id="state-suggestions">
+          <option v-for="s in INDIAN_STATE_SUGGESTIONS" :key="s" :value="s" />
+        </datalist>
         <input
           v-model="newProperty.cover_image_url"
           placeholder="Cover image URL"
@@ -247,13 +296,23 @@ async function createRoomType(propertyId: number) {
       <div v-for="p in properties" :key="p.id" class="mb-10">
         <div class="flex justify-between items-center mb-3">
           <h2 class="font-label-ledger text-xs tracking-[0.1em] uppercase text-outline">{{ p.name }}</h2>
-          <button
-            class="text-xs font-label-ledger uppercase text-secondary border border-outline/25 rounded-sm px-2.5 py-1.5"
-            @click="showNewRoom === p.id ? (showNewRoom = null) : openNewRoom(p.id)"
-          >
-            {{ showNewRoom === p.id ? "Cancel" : "+ Add room type" }}
-          </button>
+          <div class="flex items-center gap-2">
+            <button
+              class="text-xs font-label-ledger uppercase text-secondary border border-outline/25 rounded-sm px-2.5 py-1.5"
+              @click="showNewRoom === p.id ? (showNewRoom = null) : openNewRoom(p.id)"
+            >
+              {{ showNewRoom === p.id ? "Cancel" : "+ Add room type" }}
+            </button>
+            <button
+              :disabled="deleteBusy === p.id"
+              class="text-xs font-label-ledger uppercase text-error border border-error/40 rounded-sm px-2.5 py-1.5 disabled:opacity-40"
+              @click="deleteProperty(p)"
+            >
+              Delete property
+            </button>
+          </div>
         </div>
+        <p v-if="deleteError.property" class="text-error text-xs mb-2">{{ deleteError.property }}</p>
 
         <div v-if="showNewRoom === p.id" class="border border-outline/20 bg-white p-5 mb-3">
           <div class="grid gap-4 sm:grid-cols-2 mb-4">
@@ -308,42 +367,66 @@ async function createRoomType(propertyId: number) {
               </tr>
             </tbody>
             <tbody v-else>
-              <tr v-for="r in roomsByProperty[p.id]" :key="r.id" class="border-b border-outline/10 last:border-0">
-                <td class="px-5 py-3">
-                  <input v-if="editing[r.id]" v-model="editing[r.id].name" maxlength="150" class="border-b border-secondary bg-transparent" />
-                  <span v-else>{{ r.name }}</span>
-                </td>
-                <td class="px-5 py-3">{{ r.max_occupancy }}</td>
-                <td class="px-5 py-3 text-right">
-                  <input
-                    v-if="editing[r.id]"
-                    v-model.number="editing[r.id].base_price"
-                    type="number"
-                    min="1"
-                    max="1000000"
-                    step="1"
-                    class="border-b border-secondary bg-transparent w-24 text-right"
-                  />
-                  <span v-else class="font-price-display">₹{{ r.base_price.toLocaleString("en-IN") }}</span>
-                </td>
-                <td class="px-5 py-3 text-right">
-                  <button
-                    v-if="!editing[r.id]"
-                    class="text-xs font-label-ledger uppercase text-secondary border border-outline/25 rounded-sm px-2.5 py-1.5"
-                    @click="startEdit(r)"
-                  >
-                    Edit
-                  </button>
-                  <button
-                    v-else
-                    class="text-xs font-label-ledger uppercase text-white bg-secondary border-none rounded-sm px-2.5 py-1.5"
-                    @click="saveEdit(r)"
-                  >
-                    Save
-                  </button>
-                  <p v-if="saveError[r.id]" class="text-error text-xs mt-1.5">{{ saveError[r.id] }}</p>
-                </td>
-              </tr>
+              <template v-for="r in roomsByProperty[p.id]" :key="r.id">
+                <tr class="border-b border-outline/10 last:border-0">
+                  <td class="px-5 py-3">
+                    <input v-if="editing[r.id]" v-model="editing[r.id].name" maxlength="150" class="border-b border-secondary bg-transparent" />
+                    <span v-else>{{ r.name }}</span>
+                  </td>
+                  <td class="px-5 py-3">{{ r.max_occupancy }}</td>
+                  <td class="px-5 py-3 text-right">
+                    <input
+                      v-if="editing[r.id]"
+                      v-model.number="editing[r.id].base_price"
+                      type="number"
+                      min="1"
+                      max="1000000"
+                      step="1"
+                      class="border-b border-secondary bg-transparent w-24 text-right"
+                    />
+                    <span v-else class="font-price-display">₹{{ r.base_price.toLocaleString("en-IN") }}</span>
+                  </td>
+                  <td class="px-5 py-3 text-right whitespace-nowrap">
+                    <button
+                      v-if="!editing[r.id]"
+                      class="text-xs font-label-ledger uppercase text-secondary border border-outline/25 rounded-sm px-2.5 py-1.5 mr-1.5"
+                      @click="startEdit(r)"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      v-else
+                      class="text-xs font-label-ledger uppercase text-white bg-secondary border-none rounded-sm px-2.5 py-1.5 mr-1.5"
+                      @click="saveEdit(r)"
+                    >
+                      Save
+                    </button>
+                    <button
+                      class="text-xs font-label-ledger uppercase text-secondary border border-outline/25 rounded-sm px-2.5 py-1.5 mr-1.5"
+                      @click="managing = managing === r.id ? null : r.id"
+                    >
+                      {{ managing === r.id ? "Close" : "Manage" }}
+                    </button>
+                    <button
+                      :disabled="deleteBusy === r.id"
+                      class="text-xs font-label-ledger uppercase text-error border border-error/40 rounded-sm px-2.5 py-1.5 disabled:opacity-40"
+                      @click="deleteRoomType(r)"
+                    >
+                      Delete
+                    </button>
+                    <p v-if="saveError[r.id]" class="text-error text-xs mt-1.5">{{ saveError[r.id] }}</p>
+                    <p v-if="deleteError[r.id]" class="text-error text-xs mt-1.5">{{ deleteError[r.id] }}</p>
+                  </td>
+                </tr>
+                <tr v-if="managing === r.id" class="border-b border-outline/10 last:border-0 bg-surface-container-low">
+                  <td colspan="4" class="px-5 py-5">
+                    <div class="grid gap-6 lg:grid-cols-2">
+                      <RatePlansPanel :room-type-id="r.id" />
+                      <AvailabilityPanel :room-type-id="r.id" />
+                    </div>
+                  </td>
+                </tr>
+              </template>
               <tr v-if="roomsByProperty[p.id]?.length === 0">
                 <td colspan="4" class="px-5 py-8 text-center text-on-surface-variant">No room types yet.</td>
               </tr>

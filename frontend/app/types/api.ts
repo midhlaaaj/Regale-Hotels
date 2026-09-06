@@ -67,7 +67,7 @@ export interface BookingCreatePayload {
   check_out: string;
   guests_count: number;
   payment_method: "online" | "whatsapp";
-  guest: { name: string; email: string; phone: string };
+  guest: { name: string; email: string; phone: string; id_document_url?: string };
 }
 
 export interface Booking {

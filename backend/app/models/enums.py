@@ -31,3 +31,10 @@ class PaymentStatus(str, Enum):
 class UserRole(str, Enum):
     super_admin = "super_admin"
     property_manager = "property_manager"
+
+
+class GuestVerificationStatus(str, Enum):
+    unverified = "unverified"
+    pending = "pending"
+    verified = "verified"
+    rejected = "rejected"

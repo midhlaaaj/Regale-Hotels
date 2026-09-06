@@ -13,6 +13,9 @@ class GuestIn(BaseModel):
     name: str = Field(min_length=1, max_length=120)
     email: EmailStr
     phone: str = Field(min_length=7, max_length=20)
+    # Optional self-submitted ID proof link (no file upload service exists yet,
+    # so this follows the same URL-string convention as cover_image_url etc).
+    id_document_url: str | None = Field(default=None, max_length=2000)
 
     @field_validator("name")
     @classmethod
@@ -44,6 +47,10 @@ class BookingCreate(BaseModel):
 
 
 class ConfirmPaymentIn(BaseModel):
+    email: EmailStr
+
+
+class BookingCancelIn(BaseModel):
     email: EmailStr
 
 

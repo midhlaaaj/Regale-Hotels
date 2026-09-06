@@ -1,15 +1,37 @@
 <script setup lang="ts">
 const menuOpen = ref(false);
+const accountMenuOpen = ref(false);
 const navLinks = [
   { label: "Home", to: "/" },
   { label: "Properties", to: "/properties" },
-  { label: "Gallery", to: "/gallery" },
-  { label: "Offers", to: "/offers" },
+  { label: "Packages", to: "/packages" },
   { label: "About", to: "/about" },
   { label: "Locations", to: "/contact" },
 ];
 const route = useRoute();
+const router = useRouter();
 const { link: whatsappLink } = useWhatsapp();
+const { open: openAuthModal } = useAuthModal();
+const guestAuth = useGuestAuthStore();
+const { request } = useApi();
+
+function onAccountClick() {
+  if (guestAuth.isLoggedIn) {
+    accountMenuOpen.value = !accountMenuOpen.value;
+  } else {
+    openAuthModal("login");
+  }
+}
+
+async function signOut() {
+  accountMenuOpen.value = false;
+  try {
+    await request("/api/auth/logout", { method: "POST" });
+  } finally {
+    guestAuth.clear();
+    router.push("/");
+  }
+}
 
 // Close the mobile menu on route change so it never lingers into the next page.
 watch(
@@ -46,13 +68,6 @@ watch(
       </div>
       <div class="flex items-center gap-2.5">
         <NuxtLink
-          to="/my-bookings"
-          class="hidden lg:flex items-center gap-1.5 border border-outline/30 h-10 px-3 rounded text-label-ledger text-xs text-secondary hover:border-secondary hover:text-on-background transition-colors"
-        >
-          <span class="material-symbols-outlined text-[18px]">person</span>
-          <span>My Account</span>
-        </NuxtLink>
-        <NuxtLink
           to="/properties"
           class="bg-primary text-on-primary h-10 px-5 rounded font-label-ledger text-xs uppercase tracking-wider hover:bg-primary-container transition-colors hidden sm:flex items-center"
           >Book Now</NuxtLink
@@ -65,6 +80,47 @@ watch(
         >
           <span class="material-symbols-outlined text-[22px]">{{ menuOpen ? "close" : "menu" }}</span>
         </button>
+        <div class="relative hidden lg:block">
+          <button
+            v-if="!guestAuth.isLoggedIn"
+            class="flex items-center gap-1.5 border border-outline/30 h-10 px-3 rounded text-label-ledger text-xs text-secondary hover:border-secondary hover:text-on-background transition-colors bg-transparent cursor-pointer"
+            @click="onAccountClick"
+          >
+            <span class="material-symbols-outlined text-[18px]">person</span>
+            <span>Sign in</span>
+          </button>
+          <button
+            v-else
+            class="w-10 h-10 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center font-label-ledger text-sm uppercase cursor-pointer border-none flex-shrink-0"
+            :aria-label="`Account menu for ${guestAuth.profile!.name}`"
+            @click="onAccountClick"
+          >
+            {{ guestAuth.profile!.name.charAt(0) }}
+          </button>
+          <div
+            v-if="accountMenuOpen && guestAuth.isLoggedIn"
+            class="absolute right-0 top-[calc(100%+8px)] w-44 bg-surface border border-outline/20 shadow-lg py-1.5 flex flex-col"
+          >
+            <NuxtLink
+              to="/profile"
+              class="px-4 py-2.5 font-label-ledger text-xs uppercase text-on-background hover:bg-surface-container-low"
+              @click="accountMenuOpen = false"
+              >Profile</NuxtLink
+            >
+            <NuxtLink
+              to="/my-bookings"
+              class="px-4 py-2.5 font-label-ledger text-xs uppercase text-on-background hover:bg-surface-container-low"
+              @click="accountMenuOpen = false"
+              >My Bookings</NuxtLink
+            >
+            <button
+              class="px-4 py-2.5 font-label-ledger text-xs uppercase text-error text-left bg-transparent border-none cursor-pointer hover:bg-surface-container-low"
+              @click="signOut"
+            >
+              Sign out
+            </button>
+          </div>
+        </div>
       </div>
     </nav>
 
@@ -87,6 +143,38 @@ watch(
         @click="menuOpen = false"
         >My Bookings</NuxtLink
       >
+      <template v-if="guestAuth.isLoggedIn">
+        <NuxtLink
+          to="/profile"
+          class="border-b border-outline/10 py-4 font-label-ledger text-sm text-on-background flex items-center gap-3"
+          @click="menuOpen = false"
+        >
+          <span class="w-7 h-7 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center font-label-ledger text-xs uppercase flex-shrink-0">{{
+            guestAuth.profile!.name.charAt(0)
+          }}</span>
+          {{ guestAuth.profile!.name }}
+        </NuxtLink>
+        <button
+          class="border-b border-outline/10 py-4 font-label-ledger text-sm text-error text-left bg-transparent border-x-0 border-t-0 cursor-pointer"
+          @click="
+            menuOpen = false;
+            signOut();
+          "
+        >
+          Sign out
+        </button>
+      </template>
+      <button
+        v-else
+        class="border-b border-outline/10 py-4 font-label-ledger text-sm text-on-background text-left bg-transparent border-x-0 border-t-0 cursor-pointer flex items-center gap-2"
+        @click="
+          menuOpen = false;
+          openAuthModal('login');
+        "
+      >
+        <span class="material-symbols-outlined text-[18px]">person</span>
+        Sign in
+      </button>
       <NuxtLink
         to="/properties"
         class="mt-4 bg-primary text-on-primary text-center rounded font-label-ledger text-xs uppercase tracking-wider py-3"
@@ -94,6 +182,8 @@ watch(
         >Book Now</NuxtLink
       >
     </div>
+
+    <AuthModal />
 
     <main class="flex-1 pt-[70px]">
       <slot />

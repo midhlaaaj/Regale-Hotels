@@ -9,8 +9,6 @@ class AdminLoginRequest(BaseModel):
 
 
 class AdminLoginResponse(BaseModel):
-    access_token: str
-    token_type: str = "bearer"
     role: UserRole
     property_id: int | None
     name: str

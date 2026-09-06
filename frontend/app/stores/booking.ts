@@ -10,7 +10,7 @@ interface BookingDraft {
   checkIn: string | null;
   checkOut: string | null;
   guestsCount: number;
-  guest: { name: string; email: string; phone: string };
+  guest: { name: string; email: string; phone: string; id_document_url: string };
   paymentMethod: "online" | "whatsapp" | null;
   result: Booking | null;
 }
@@ -25,7 +25,7 @@ export const useBookingStore = defineStore("booking", {
     checkIn: null,
     checkOut: null,
     guestsCount: 2,
-    guest: { name: "", email: "", phone: "" },
+    guest: { name: "", email: "", phone: "", id_document_url: "" },
     paymentMethod: null,
     result: null,
   }),

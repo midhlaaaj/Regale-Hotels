@@ -3,7 +3,7 @@ from decimal import Decimal
 
 from sqlmodel import JSON, Column, Field, SQLModel
 
-from app.models.enums import BookingSource, BookingStatus, PaymentGateway, PaymentStatus
+from app.models.enums import BookingSource, BookingStatus, GuestVerificationStatus, PaymentGateway, PaymentStatus
 
 
 class Guest(SQLModel, table=True):
@@ -15,6 +15,12 @@ class Guest(SQLModel, table=True):
     phone: str
     has_account: bool = False
     auth_user_id: int | None = None
+    password_hash: str | None = None
+    id_document_url: str | None = None
+    verification_status: GuestVerificationStatus = Field(
+        default=GuestVerificationStatus.unverified, index=True
+    )
+    verification_note: str | None = None
     created_at: datetime = Field(default_factory=datetime.utcnow)
 
 

@@ -1,14 +1,29 @@
 from datetime import date, datetime
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.config import settings
 from app.core.security import AdminClaims, get_current_admin, scope_property_id
 from app.db import get_session
 from app.models import Booking, BookingStatus
+from app.schemas.admin_content import AdminBookingCreate
+from app.services.booking import create_manual_booking
 
 router = APIRouter(prefix="/api/admin/bookings", tags=["admin-bookings"])
+
+
+@router.post("")
+async def post_manual_booking(
+    payload: AdminBookingCreate,
+    admin: AdminClaims = Depends(get_current_admin),
+    session: AsyncSession = Depends(get_session),
+):
+    """Logs a walk-in/phone reservation taken outside the site — payment is
+    handled by staff directly, so this creates the booking already confirmed."""
+    property_id = scope_property_id(payload.property_id, admin)
+    return await create_manual_booking(session, property_id, payload)
 
 
 @router.get("")
@@ -17,6 +32,8 @@ async def list_bookings(
     status: BookingStatus | None = None,
     date_from: date | None = None,
     date_to: date | None = None,
+    limit: int = Query(default=100, ge=1, le=200),
+    offset: int = Query(default=0, ge=0),
     admin: AdminClaims = Depends(get_current_admin),
     session: AsyncSession = Depends(get_session),
 ):
@@ -30,7 +47,7 @@ async def list_bookings(
         query = query.where(Booking.check_in >= date_from)
     if date_to is not None:
         query = query.where(Booking.check_out <= date_to)
-    result = await session.execute(query.order_by(Booking.created_at.desc()))
+    result = await session.execute(query.order_by(Booking.created_at.desc()).limit(limit).offset(offset))
     return result.scalars().all()
 
 
@@ -83,7 +100,10 @@ async def refund_booking(
     session: AsyncSession = Depends(get_session),
 ):
     """Stub — flips status to refunded. Replace with a real Razorpay refund call
-    once sandbox keys are wired up; payments.status must then only change via that call."""
+    once sandbox keys are wired up; payments.status must then only change via that call.
+    Gated by payments_stub_mode so this can't fake a refund once a real gateway is live."""
+    if not settings.payments_stub_mode:
+        raise HTTPException(501, "Refund is not implemented")
     booking = await _get_scoped_booking(session, admin, booking_id)
     if booking.status != BookingStatus.confirmed:
         raise HTTPException(400, "Only confirmed bookings can be refunded")

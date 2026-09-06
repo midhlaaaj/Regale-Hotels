@@ -49,14 +49,24 @@ export interface AdminBooking {
   updated_at: string;
 }
 
+export type GuestVerificationStatus = "unverified" | "pending" | "verified" | "rejected";
+
 export interface Guest {
   id: number;
   name: string;
   email: string;
   phone: string;
   has_account: boolean;
+  id_document_url: string | null;
+  verification_status: GuestVerificationStatus;
+  verification_note: string | null;
   created_at: string;
   bookings?: AdminBooking[];
+}
+
+export interface AvailabilityDay {
+  date: string;
+  rooms_available: number;
 }
 
 export interface DashboardData {

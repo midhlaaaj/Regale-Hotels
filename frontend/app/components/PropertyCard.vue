@@ -6,15 +6,28 @@ const props = defineProps<{
   tag?: string;
   fromPrice?: number;
   rating?: string;
+  checkIn?: string;
+  checkOut?: string;
+  guests?: number;
 }>();
+
+// Carry the guest's search context (dates/guests) forward so the property and
+// room pages can prefill instead of resetting to arbitrary defaults.
+const to = computed(() => {
+  const query: Record<string, string> = {};
+  if (props.checkIn) query.check_in = props.checkIn;
+  if (props.checkOut) query.check_out = props.checkOut;
+  if (props.guests) query.guests = String(props.guests);
+  return { path: `/properties/${props.property.slug}`, query };
+});
 </script>
 
 <template>
   <NuxtLink
-    :to="`/properties/${props.property.slug}`"
-    class="group cursor-pointer border border-outline/10 hover:border-outline/30 transition-colors bg-surface-container-lowest block"
+    :to="to"
+    class="group cursor-pointer border border-outline/10 hover:border-outline/30 transition-colors bg-surface-container-lowest flex flex-col h-full"
   >
-    <div class="relative h-64 overflow-hidden">
+    <div class="relative h-64 overflow-hidden flex-shrink-0">
       <img
         :src="props.property.cover_image_url"
         :alt="props.property.name"
@@ -27,10 +40,10 @@ const props = defineProps<{
         }}</span>
       </div>
     </div>
-    <div class="p-6">
-      <h3 class="font-headline-sm text-headline-sm text-on-background mb-2">{{ props.property.name }}</h3>
-      <p class="text-body-md text-on-surface-variant mb-6 line-clamp-2">{{ props.property.description }}</p>
-      <div class="flex justify-between items-end border-t border-outline/10 pt-4">
+    <div class="p-6 flex flex-col flex-1">
+      <h3 class="font-headline-sm text-headline-sm text-on-background mb-2 line-clamp-2 min-h-[64px]">{{ props.property.name }}</h3>
+      <p class="text-body-md text-on-surface-variant mb-6 line-clamp-2 min-h-[48px]">{{ props.property.description }}</p>
+      <div class="mt-auto flex justify-between items-end border-t border-outline/10 pt-4">
         <div class="flex flex-col">
           <span class="font-label-ledger text-label-ledger text-on-surface-variant text-xs uppercase mb-1"
             >From</span

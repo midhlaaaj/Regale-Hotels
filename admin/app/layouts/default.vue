@@ -2,12 +2,14 @@
 const auth = useAuthStore();
 const router = useRouter();
 const route = useRoute();
+const { request } = useApi();
 
 const navItems = [
   { label: "Dashboard", icon: "dashboard", to: "/", superOnly: false },
   { label: "Bookings", icon: "event", to: "/bookings", superOnly: false },
   { label: "Inquiries", icon: "forum", to: "/inquiries", superOnly: false },
   { label: "Rooms & Rates", icon: "bed", to: "/rooms", superOnly: true },
+  { label: "Packages", icon: "card_giftcard", to: "/packages", superOnly: true },
   { label: "Guests", icon: "group", to: "/guests", superOnly: false },
   { label: "Reports", icon: "bar_chart", to: "/reports", superOnly: true },
   { label: "Settings", icon: "settings", to: "/settings", superOnly: true },
@@ -15,9 +17,13 @@ const navItems = [
 
 const visibleNav = computed(() => navItems.filter((n) => !n.superOnly || auth.isSuperAdmin));
 
-function signOut() {
-  auth.logout();
-  router.push("/login");
+async function signOut() {
+  try {
+    await request("/api/admin/logout", { method: "POST" });
+  } finally {
+    auth.clear();
+    router.push("/login");
+  }
 }
 </script>
 

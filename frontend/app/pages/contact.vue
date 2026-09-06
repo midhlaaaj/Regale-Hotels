@@ -1,14 +1,24 @@
 <script setup lang="ts">
+import type { Property } from "~/types/api";
+
 useSeoMeta({ title: "Locations — Regale Hotels", description: "Contact details for all four Regale properties." });
 
 const { link: whatsappLink } = useWhatsapp();
+const { request } = useApi();
+const { data: properties } = useAsyncData<Property[]>("contact-properties", () => request<Property[]>("/api/properties"), {
+  lazy: true,
+});
 
 const locations = [
-  { region: "Kerala · Backwaters", name: "The Alleppey Ledger", address: "Ledger House, North Canal Road, Punnamada, Alappuzha 688006, Kerala", phone: "+91 477 224 1180", email: "alleppey@regale.in", hostLine: "Host: Sanjay Varma · 09:00–21:00 IST", coords: "9.4981° N, 76.3388° E" },
-  { region: "Kerala · High Range", name: "Munnar Estate", address: "Bungalow 4, Kannan Devan Hills, Pallivasal, Munnar 685612, Kerala", phone: "+91 4865 263 447", email: "munnar@regale.in", hostLine: "Host: Leela Thomas · 08:00–20:00 IST", coords: "10.0889° N, 77.0595° E" },
-  { region: "North India · Delhi", name: "Lutyens' Haven", address: "11 Sunder Nagar Lane, Nizamuddin East, New Delhi 110003", phone: "+91 11 4356 9020", email: "delhi@regale.in", hostLine: "Host: Imran Qureshi · 24 hours", coords: "28.5936° N, 77.2495° E" },
-  { region: "Goa · North", name: "Assagao Villa", address: "House 218, Bouta Vaddo, Assagao, Bardez, Goa 403507", phone: "+91 832 227 6611", email: "goa@regale.in", hostLine: "Host: Maria Fernandes · 09:00–22:00 IST", coords: "15.6011° N, 73.7900° E" },
+  { slug: "alleppey-ledger", region: "Kerala · Backwaters", name: "The Alleppey Ledger", address: "Ledger House, North Canal Road, Punnamada, Alappuzha 688006, Kerala", phone: "+91 477 224 1180", email: "alleppey@regale.in", hostLine: "Host: Sanjay Varma · 09:00–21:00 IST", coords: "9.4981° N, 76.3388° E" },
+  { slug: "munnar-estate", region: "Kerala · High Range", name: "Munnar Estate", address: "Bungalow 4, Kannan Devan Hills, Pallivasal, Munnar 685612, Kerala", phone: "+91 4865 263 447", email: "munnar@regale.in", hostLine: "Host: Leela Thomas · 08:00–20:00 IST", coords: "10.0889° N, 77.0595° E" },
+  { slug: "mattancherry-manor", region: "Kerala · Fort Kochi", name: "Mattancherry Manor", address: "12 Bazaar Road, Mattancherry, Kochi 682002, Kerala", phone: "+91 484 221 5590", email: "kochi@regale.in", hostLine: "Host: Ravi Menon · 24 hours", coords: "9.9585° N, 76.2588° E" },
+  { slug: "varkala-cliff-villa", region: "Kerala · Cliffside", name: "Varkala Cliff Villa", address: "North Cliff Road, Varkala 695141, Kerala", phone: "+91 470 260 3312", email: "varkala@regale.in", hostLine: "Host: Meera Pillai · 09:00–22:00 IST", coords: "8.7379° N, 76.7163° E" },
 ];
+
+function propertyFor(slug: string) {
+  return properties.value?.find((p) => p.slug === slug);
+}
 </script>
 
 <template>
@@ -35,6 +45,13 @@ const locations = [
           <p class="font-label-ledger text-xs text-outline">{{ l.hostLine }}</p>
         </div>
         <div class="flex flex-wrap gap-2.5 mt-5">
+          <NuxtLink
+            v-if="propertyFor(l.slug)"
+            :to="`/properties/${l.slug}`"
+            class="bg-primary text-on-primary cursor-pointer px-5 py-3 rounded font-label-ledger text-[11px] tracking-[0.08em] uppercase inline-flex items-center"
+          >
+            Book Now
+          </NuxtLink>
           <a
             :href="whatsappLink(`Hi, I have a question about ${l.name}`)"
             target="_blank"
@@ -54,12 +71,27 @@ const locations = [
           </a>
         </div>
       </div>
+      <NuxtLink
+        v-if="propertyFor(l.slug)"
+        :to="`/properties/${l.slug}`"
+        class="group relative min-h-[240px] block overflow-hidden border border-outline/20"
+      >
+        <img
+          :src="propertyFor(l.slug)!.cover_image_url"
+          :alt="l.name"
+          loading="lazy"
+          class="w-full h-full min-h-[240px] object-cover group-hover:scale-105 transition-transform duration-700"
+        />
+        <div class="absolute inset-0 bg-gradient-to-t from-on-background/70 via-transparent to-transparent" />
+        <p class="absolute bottom-3 left-4 font-label-ledger text-[11px] text-surface-bright">{{ l.coords }}</p>
+      </NuxtLink>
       <div
+        v-else
         class="border border-outline/20 min-h-[240px] flex flex-col items-center justify-center gap-1.5"
         style="background: repeating-linear-gradient(135deg, #f0eee9 0px, #f0eee9 9px, #e8e5dd 9px, #e8e5dd 18px)"
       >
         <span class="material-symbols-outlined text-2xl text-secondary">map</span>
-        <p class="font-label-ledger text-xs tracking-[0.1em] uppercase text-on-surface-variant">Map embed</p>
+        <p class="font-label-ledger text-xs tracking-[0.1em] uppercase text-on-surface-variant">Loading…</p>
         <p class="font-label-ledger text-[11px] text-outline">{{ l.coords }}</p>
       </div>
     </div>

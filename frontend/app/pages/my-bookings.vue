@@ -4,6 +4,32 @@ import type { Booking } from "~/types/api";
 useSeoMeta({ title: "My Bookings — Regale Hotels" });
 
 const { request } = useApi();
+const guestAuth = useGuestAuthStore();
+
+const myBookings = ref<Booking[]>([]);
+const myBookingsLoading = ref(false);
+const myBookingsError = ref("");
+
+async function loadMyBookings() {
+  myBookingsLoading.value = true;
+  myBookingsError.value = "";
+  try {
+    myBookings.value = await request<Booking[]>("/api/bookings/me");
+  } catch {
+    myBookingsError.value = "Could not load your bookings. Please try again.";
+  } finally {
+    myBookingsLoading.value = false;
+  }
+}
+
+watch(
+  () => guestAuth.isLoggedIn,
+  (loggedIn) => {
+    if (loggedIn) loadMyBookings();
+  },
+  { immediate: true }
+);
+
 const bookingId = ref("");
 const email = ref("");
 const result = ref<Booking | null>(null);
@@ -11,6 +37,29 @@ const error = ref("");
 const loading = ref(false);
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const cancelling = ref(false);
+const cancelError = ref("");
+
+const CANCELLABLE = ["pending_payment", "confirmed", "pending_whatsapp"];
+const canCancel = computed(
+  () => !!result.value && CANCELLABLE.includes(result.value.status) && new Date(result.value.check_in) > new Date(new Date().toDateString())
+);
+
+async function cancelBooking() {
+  if (!result.value) return;
+  cancelError.value = "";
+  cancelling.value = true;
+  try {
+    result.value = await request<Booking>(`/api/bookings/${result.value.id}/cancel`, {
+      method: "PATCH",
+      body: { email: email.value.trim() },
+    });
+  } catch {
+    cancelError.value = "Could not cancel this booking. Please try again.";
+  } finally {
+    cancelling.value = false;
+  }
+}
 
 async function lookup() {
   error.value = "";
@@ -42,9 +91,33 @@ const statusLabel: Record<string, string> = {
   <div class="max-w-[1080px] mx-auto px-margin-mobile md:px-margin-desktop py-12 md:py-16">
     <p class="font-label-ledger text-xs tracking-[0.16em] uppercase mb-3" style="color: #c5a059">Guests</p>
     <h1 class="font-display-lg text-[clamp(36px,6vw,56px)] leading-tight text-on-background mb-8">My bookings</h1>
+
+    <div v-if="guestAuth.isLoggedIn" class="mb-14">
+      <div v-if="myBookingsLoading" class="border border-outline/20 bg-white max-w-[720px] p-6">
+        <Skeleton class="h-6 w-24 mb-6" />
+        <Skeleton class="h-4 w-full mb-3" />
+        <Skeleton class="h-4 w-2/3" />
+      </div>
+      <p v-else-if="myBookingsError" class="text-error text-sm">{{ myBookingsError }}</p>
+      <p v-else-if="!myBookings.length" class="text-body-md text-on-surface-variant">You don't have any bookings yet.</p>
+      <div v-else class="grid gap-4 max-w-[720px]">
+        <div v-for="b in myBookings" :key="b.id" class="border border-outline/20 bg-white p-5 flex justify-between items-center">
+          <div>
+            <p class="font-price-display text-lg text-primary mb-1">#{{ b.id }}</p>
+            <p class="text-sm text-on-surface-variant">{{ b.check_in }} → {{ b.check_out }} · {{ b.guests_count }} guests</p>
+          </div>
+          <div class="text-right">
+            <span class="px-3 py-1.5 rounded-sm font-label-ledger text-xs uppercase bg-brass-tint text-secondary block mb-1.5">{{
+              statusLabel[b.status]
+            }}</span>
+            <p class="font-label-ledger text-sm text-on-background">₹{{ b.total_amount.toLocaleString("en-IN") }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <p class="text-body-md text-on-surface-variant max-w-[54ch] mb-10">
-      Guest checkout doesn't require an account. Look up a booking with its reference number and the email you
-      booked with.
+      Booked without an account? Look up that booking with its reference number and the email you booked with.
     </p>
 
     <div class="border border-outline/20 bg-white p-6 md:p-8 max-w-[560px] mb-10">
@@ -100,6 +173,15 @@ const statusLabel: Record<string, string> = {
         <div class="flex justify-between pt-4 font-label-ledger text-lg font-bold text-on-background">
           <span>TOTAL</span><span>₹{{ result.total_amount.toLocaleString("en-IN") }}</span>
         </div>
+        <button
+          v-if="canCancel"
+          :disabled="cancelling"
+          class="w-full mt-6 bg-transparent text-error border border-error/40 cursor-pointer py-3 rounded font-label-ledger text-xs tracking-[0.1em] uppercase disabled:opacity-50"
+          @click="cancelBooking"
+        >
+          {{ cancelling ? "Cancelling…" : "Cancel this booking" }}
+        </button>
+        <p v-if="cancelError" class="text-error text-sm mt-3">{{ cancelError }}</p>
       </div>
     </div>
   </div>

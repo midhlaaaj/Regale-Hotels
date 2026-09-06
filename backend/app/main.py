@@ -2,12 +2,13 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.core.config import settings
-from app.routers import bookings, properties, room_types, testimonials
+from app.routers import auth, bookings, content, packages, properties, room_types, testimonials
 from app.routers.admin import auth as admin_auth
 from app.routers.admin import bookings as admin_bookings
 from app.routers.admin import content as admin_content
 from app.routers.admin import dashboard as admin_dashboard
 from app.routers.admin import guests as admin_guests
+from app.routers.admin import packages as admin_packages
 from app.routers.admin import properties as admin_properties
 from app.routers.admin import reports as admin_reports
 from app.routers.admin import users as admin_users
@@ -22,10 +23,13 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+app.include_router(auth.router)
 app.include_router(properties.router)
 app.include_router(room_types.router)
 app.include_router(bookings.router)
 app.include_router(testimonials.router)
+app.include_router(content.router)
+app.include_router(packages.router)
 
 app.include_router(admin_auth.router)
 app.include_router(admin_dashboard.router)
@@ -35,6 +39,7 @@ app.include_router(admin_guests.router)
 app.include_router(admin_reports.router)
 app.include_router(admin_users.router)
 app.include_router(admin_content.router)
+app.include_router(admin_packages.router)
 
 
 @app.get("/health")
