@@ -45,3 +45,14 @@ app.include_router(admin_packages.router)
 @app.get("/health")
 async def health():
     return {"status": "ok"}
+
+
+# In production, Vercel's multi-service rewrite forwards the *full* matched
+# path (e.g. "/api/backend/health") to this service rather than stripping the
+# "/api/backend" prefix — so the same app is also mounted under that prefix.
+# Registered after every route above so local dev (hit directly, no prefix)
+# keeps working unchanged; the "/api/backend" mount only matters in prod.
+api = app
+app = FastAPI(title="Regale Hotels API")
+app.mount("/api/backend", api)
+app.mount("/", api)
