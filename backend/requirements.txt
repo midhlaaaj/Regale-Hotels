@@ -1,5 +1,10 @@
 fastapi
-uvicorn[standard]
+# Plain uvicorn, not uvicorn[standard] — the [standard] extra pulls in uvloop,
+# which crashes asyncpg's SSL connection setup on Vercel's Lambda-based Python
+# runtime (OSError: [Errno 16] Device or resource busy). Vercel wraps the ASGI
+# app in its own vendored uvicorn anyway, so the extras only ever mattered for
+# local dev's --reload/perf, not for what actually gets deployed.
+uvicorn
 sqlmodel
 email-validator
 httpx
