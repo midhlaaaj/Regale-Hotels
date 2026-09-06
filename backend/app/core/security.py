@@ -72,17 +72,21 @@ def _set_cookie_pair(response: Response, session_cookie: str, csrf_cookie: str, 
     token theft). A second, JS-readable CSRF cookie is issued alongside it —
     the frontend echoes its value back as a header on mutating requests, and
     the matching get_current_* dependency checks the two match (the
-    double-submit pattern). This is required because httpOnly + SameSite=Lax
-    cookies are still auto-attached by the browser to cross-origin requests."""
+    double-submit pattern). SameSite=None (rather than Lax) is required
+    because the frontend/admin apps and this API are deployed on unrelated
+    domains (e.g. separate *.vercel.app projects) rather than subdomains of
+    one shared domain — the double-submit CSRF check above is what actually
+    guards against cross-site misuse of the now cross-site-sendable cookie.
+    Browsers require Secure whenever SameSite=None is used."""
     csrf_token = secrets.token_urlsafe(32)
     max_age = settings.jwt_expire_minutes * 60
     response.set_cookie(
         session_cookie, token, max_age=max_age, httponly=True,
-        secure=settings.cookie_secure, samesite="lax", path="/",
+        secure=settings.cookie_secure, samesite="none", path="/",
     )
     response.set_cookie(
         csrf_cookie, csrf_token, max_age=max_age, httponly=False,
-        secure=settings.cookie_secure, samesite="lax", path="/",
+        secure=settings.cookie_secure, samesite="none", path="/",
     )
 
 

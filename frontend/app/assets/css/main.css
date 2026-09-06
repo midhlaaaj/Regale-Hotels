@@ -19,7 +19,11 @@ a {
   color: #842c0c;
   text-decoration: none;
 }
-a:hover {
+/* Scoped off button-styled links (anything with its own bg-* utility) — this
+   plain tag selector has higher specificity than a single Tailwind class, so
+   unscoped it was clobbering text-on-primary etc. on hover, making button
+   text the same color as its own hover background (invisible). */
+a:hover:not([class*="bg-"]) {
   color: #a44322;
 }
 input,
@@ -29,7 +33,8 @@ textarea {
   font: inherit;
   color: inherit;
 }
-input:focus {
+input:focus,
+select:focus {
   outline: none;
 }
 .material-symbols-outlined {

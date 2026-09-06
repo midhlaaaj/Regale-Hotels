@@ -11,15 +11,22 @@ export default defineNuxtConfig({
   ],
 
   site: {
-    url: "http://localhost:3000",
+    url: process.env.NUXT_PUBLIC_SITE_URL || "http://localhost:3000",
+  },
+
+  // The admin panel stays a pure SPA (matching its former standalone app):
+  // its cookie-auth flow assumes a client-only fetch, and admin routes have
+  // no SEO reason to be server-rendered anyway. Also keep it out of the
+  // sitemap/robots output generated for the public marketing site.
+  routeRules: {
+    "/admin/**": { ssr: false, robots: false, sitemap: false },
   },
 
   runtimeConfig: {
     public: {
-      // Must share a registrable domain with the dev server's own origin
-      // (both "localhost") — the guest session cookie is SameSite=Lax, which
-      // browsers only attach to same-site fetches. 127.0.0.1 and localhost
-      // count as different sites even though they resolve to the same host.
+      // The guest session cookie is SameSite=None, so the API can live on an
+      // unrelated domain (e.g. a separate Render/Vercel deployment) — no
+      // shared registrable domain with this app is required.
       apiBase: process.env.NUXT_PUBLIC_API_BASE || "http://localhost:8000",
       // Placeholder — not a real registered WhatsApp Business number. Replace via
       // NUXT_PUBLIC_WHATSAPP_NUMBER before this goes anywhere near production.

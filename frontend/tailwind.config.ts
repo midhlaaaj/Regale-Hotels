@@ -59,6 +59,7 @@ export default <Config>{
         "tertiary-fixed": "#ffdea5",
         "brass-tint": "#F2E8D5",
         whatsapp: "#25D366",
+        "ink-green": "#1B3022",
       },
       borderRadius: {
         DEFAULT: "0.125rem",

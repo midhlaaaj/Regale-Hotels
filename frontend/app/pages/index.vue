@@ -90,18 +90,18 @@ const advantages = [
         <div class="absolute inset-0 bg-gradient-to-t from-on-background/80 via-on-background/20 to-transparent" />
       </div>
       <div class="relative z-10 w-full max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop flex flex-col items-center text-center">
-        <h1 class="font-display-lg text-display-lg-mobile md:text-display-lg text-surface-bright mb-6 max-w-3xl">
+        <h1 class="order-2 md:order-none font-display-lg text-display-lg-mobile md:text-display-lg text-surface-bright mb-6 max-w-3xl">
           Sanctuaries of Serenity
         </h1>
-        <p class="text-body-lg text-surface-variant mb-12 max-w-xl">
+        <p class="order-3 md:order-none text-body-lg text-surface-variant mb-12 max-w-xl">
           Curated boutique properties offering an authentic, unhurried Indian editorial experience.
         </p>
-        <div class="flex flex-wrap justify-center items-center gap-x-5 gap-y-2 sm:gap-x-7 bg-on-background/45 backdrop-blur-md px-5 sm:px-6 py-3 rounded-full border border-surface/15 max-w-full">
+        <div class="order-1 md:order-none mb-6 md:mb-0 flex flex-wrap justify-center items-center gap-x-5 gap-y-2 sm:gap-x-7 bg-on-background/45 backdrop-blur-md px-5 sm:px-6 py-3 rounded-full border border-surface/15 max-w-full">
           <div class="flex items-center gap-1.5">
             <span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1; color: #c5a059">star</span>
             <span class="font-label-ledger text-label-ledger text-surface-bright whitespace-nowrap">4.8 Rating</span>
           </div>
-          <span class="w-px h-4 bg-surface/25 flex-shrink-0" />
+          <span class="w-px h-4 bg-surface/25 flex-shrink-0 hidden sm:block" />
           <span class="font-label-ledger text-label-ledger text-surface-bright whitespace-nowrap">2,340 Direct Guests</span>
           <span class="w-px h-4 bg-surface/25 flex-shrink-0 hidden sm:block" />
           <span class="font-label-ledger text-label-ledger text-surface-bright whitespace-nowrap hidden sm:inline"
@@ -208,11 +208,13 @@ const advantages = [
       </div>
     </section>
 
-    <section class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-24">
-      <h2 class="font-headline-md text-headline-md text-on-background mb-16 text-center">From The Guest Ledger</h2>
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
+    <section class="max-w-container-max mx-auto md:px-margin-desktop py-24 overflow-hidden">
+      <h2 class="font-headline-md text-headline-md text-on-background mb-16 text-center px-margin-mobile md:px-0">From The Guest Ledger</h2>
+      <div
+        class="flex md:grid md:grid-cols-3 gap-gutter overflow-x-auto md:overflow-visible snap-x snap-mandatory px-margin-mobile md:px-0 pb-2 md:pb-0 hide-scrollbar"
+      >
         <template v-if="testimonialsPending">
-          <div v-for="i in 3" :key="i" class="bg-surface p-8 border border-outline/10">
+          <div v-for="i in 3" :key="i" class="bg-surface p-8 border border-outline/10 min-w-[85%] sm:min-w-[60%] md:min-w-0 flex-shrink-0 snap-center">
             <Skeleton class="h-4 w-24 mb-6" />
             <Skeleton class="h-4 w-full mb-2" />
             <Skeleton class="h-4 w-full mb-2" />
@@ -229,6 +231,7 @@ const advantages = [
           :key="t.id"
           :testimonial="t"
           :property-name="properties?.find((p) => p.id === t.property_id)?.name"
+          class="min-w-[85%] sm:min-w-[60%] md:min-w-0 flex-shrink-0 snap-center"
         />
       </div>
     </section>
