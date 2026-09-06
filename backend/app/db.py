@@ -1,3 +1,4 @@
+import socket
 import ssl
 from collections.abc import AsyncGenerator
 from urllib.parse import urlsplit, urlunsplit
@@ -8,11 +9,25 @@ from app.core.config import settings
 
 # Passing a bare ssl-mode *string* (e.g. "require") makes asyncpg 0.30+ attempt
 # its newer "direct TLS negotiation" path (loop.create_connection(ssl=...)) —
-# which crashes with "OSError: [Errno 16] Device or resource busy" under
+# which crashed with "OSError: [Errno 16] Device or resource busy" under
 # Vercel's Lambda-based Python runtime, a known uvloop/sandbox incompatibility.
 # Passing a real SSLContext instead makes asyncpg fall back to the classic
 # STARTTLS-style negotiation (loop.start_tls()), which doesn't hit that path.
 _ssl_context = ssl.create_default_context()
+
+# Separately: plain DNS resolution (socket.getaddrinfo) can also throw that
+# same "Device or resource busy" error in Lambda-based sandboxes — a known,
+# apparently IPv6/dual-stack-related quirk of that environment, unrelated to
+# our code. Forcing IPv4-only resolution process-wide is the standard
+# workaround; harmless locally since IPv4 always works there too.
+_orig_getaddrinfo = socket.getaddrinfo
+
+
+def _ipv4_only_getaddrinfo(host, port, family=0, type=0, proto=0, flags=0):
+    return _orig_getaddrinfo(host, port, socket.AF_INET, type, proto, flags)
+
+
+socket.getaddrinfo = _ipv4_only_getaddrinfo
 
 
 def _normalized_url(url: str) -> str:
