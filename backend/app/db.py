@@ -1,8 +1,9 @@
-import socket
+import asyncio
 import ssl
 from collections.abc import AsyncGenerator
 from urllib.parse import urlsplit, urlunsplit
 
+import asyncpg
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
 from app.core.config import settings
@@ -15,19 +16,29 @@ from app.core.config import settings
 # STARTTLS-style negotiation (loop.start_tls()), which doesn't hit that path.
 _ssl_context = ssl.create_default_context()
 
-# Separately: plain DNS resolution (socket.getaddrinfo) can also throw that
-# same "Device or resource busy" error in Lambda-based sandboxes — a known,
-# apparently IPv6/dual-stack-related quirk of that environment, unrelated to
-# our code. Forcing IPv4-only resolution process-wide is the standard
-# workaround; harmless locally since IPv4 always works there too.
-_orig_getaddrinfo = socket.getaddrinfo
+# That fixed the SSL-negotiation crash, but plain DNS resolution
+# (socket.getaddrinfo, called from asyncio's default executor) can throw that
+# same OSError: [Errno 16] Device or resource busy on its own in this sandbox
+# — forcing IPv4-only resolution to work around it was tried and made things
+# worse (turned it into a hard socket.gaierror), so that's not the fix.
+# Instead, retry the whole connection attempt a few times with backoff: this
+# class of sandbox networking error has been transient/per-attempt in every
+# report we've seen it in, so a bounded retry is the safe mitigation without
+# needing to understand the sandbox's exact resolver internals.
+_orig_asyncpg_connect = asyncpg.connect
 
 
-def _ipv4_only_getaddrinfo(host, port, family=0, type=0, proto=0, flags=0):
-    return _orig_getaddrinfo(host, port, socket.AF_INET, type, proto, flags)
+async def _connect_with_retry(*args, **kwargs):
+    for attempt in range(4):
+        try:
+            return await _orig_asyncpg_connect(*args, **kwargs)
+        except OSError:
+            if attempt == 3:
+                raise
+            await asyncio.sleep(0.25 * (attempt + 1))
 
 
-socket.getaddrinfo = _ipv4_only_getaddrinfo
+asyncpg.connect = _connect_with_retry
 
 
 def _normalized_url(url: str) -> str:
