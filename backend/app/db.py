@@ -1,9 +1,18 @@
+import ssl
 from collections.abc import AsyncGenerator
 from urllib.parse import urlsplit, urlunsplit
 
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
 from app.core.config import settings
+
+# Passing a bare ssl-mode *string* (e.g. "require") makes asyncpg 0.30+ attempt
+# its newer "direct TLS negotiation" path (loop.create_connection(ssl=...)) —
+# which crashes with "OSError: [Errno 16] Device or resource busy" under
+# Vercel's Lambda-based Python runtime, a known uvloop/sandbox incompatibility.
+# Passing a real SSLContext instead makes asyncpg fall back to the classic
+# STARTTLS-style negotiation (loop.start_tls()), which doesn't hit that path.
+_ssl_context = ssl.create_default_context()
 
 
 def _normalized_url(url: str) -> str:
@@ -26,7 +35,7 @@ engine = create_async_engine(
     # before Neon's own idle timeout gets a chance to close it underneath us.
     pool_pre_ping=True,
     pool_recycle=300,
-    connect_args={"ssl": "require"},
+    connect_args={"ssl": _ssl_context},
 )
 async_session = async_sessionmaker(engine, expire_on_commit=False, class_=AsyncSession)
 
