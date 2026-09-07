@@ -1,5 +1,5 @@
 import express from "express";
-import { createRootApp } from "./expressApp";
+import { createApiApp } from "./expressApp";
 import { settings } from "./config";
 
 // Vercel's Express framework preset auto-detects this file by scanning for
@@ -10,7 +10,7 @@ import { settings } from "./config";
 // actual app assembly (kept under a non-canonical name on purpose).
 void express;
 
-const app = createRootApp();
+const app = createApiApp();
 
 app.listen(settings.port, () => {
   console.log(`Regale Hotels API listening on http://127.0.0.1:${settings.port}`);

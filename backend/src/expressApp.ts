@@ -22,8 +22,9 @@ import { router as adminPropertiesRouter } from "./routes/admin/properties";
 import { router as adminReportsRouter } from "./routes/admin/reports";
 import { router as adminUsersRouter } from "./routes/admin/users";
 
-/** Builds the API app — equivalent to the single `api = FastAPI(...)` instance
- * in app/main.py before it gets dual-mounted for Vercel. */
+/** Builds the API app. Deployed as its own standalone Vercel project (no
+ * shared-domain rewrite prefix), so routes are mounted at their plain paths
+ * and hit directly at this service's own origin. */
 export function createApiApp(): Express {
   const app = express();
 
@@ -64,18 +65,4 @@ export function createApiApp(): Express {
   app.use(errorHandler);
 
   return app;
-}
-
-/** In production, a multi-service rewrite may forward the *full* matched path
- * (e.g. "/api/backend/health") to this service rather than stripping the
- * "/api/backend" prefix — so the same app is also mounted under that prefix,
- * mirroring the dual `app.mount("/api/backend", api)` / `app.mount("/", api)`
- * used by the old FastAPI entrypoint. Local dev (hit directly, no prefix)
- * keeps working unchanged; the "/api/backend" mount only matters in prod. */
-export function createRootApp(): Express {
-  const api = createApiApp();
-  const root = express();
-  root.use("/api/backend", api);
-  root.use("/", api);
-  return root;
 }
