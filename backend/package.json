@@ -10,7 +10,8 @@
     "start": "node dist/index.js",
     "init-db": "tsx src/initDb.ts",
     "seed": "tsx src/seed.ts",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "bundle": "esbuild src/server.ts --bundle --platform=node --target=node18 --format=cjs --outfile=serverless/server.js --external:pg-native"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
@@ -30,6 +31,7 @@
     "@types/jsonwebtoken": "^9.0.6",
     "@types/node": "^20.14.9",
     "@types/pg": "^8.11.6",
+    "esbuild": "^0.28.2",
     "tsx": "^4.16.2",
     "typescript": "^5.5.3"
   }

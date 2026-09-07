@@ -3,12 +3,7 @@
 .env.*
 !.env.example
 
-# --- Python (backend) ---
-backend/.venv/
-**/__pycache__/
-*.pyc
-
-# --- Node (frontend, admin) ---
+# --- Node (frontend, admin, backend) ---
 node_modules/
 .nuxt/
 .output/
