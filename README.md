@@ -4,7 +4,7 @@ A portfolio project: a multi-property hotel booking platform for a fictional Ind
 
 ## Quick facts
 
-- **Stack:** Nuxt 3 (Vue) frontend, FastAPI (Python) backend over REST, Neon (serverless Postgres) via SQLAlchemy (async)/SQLModel + asyncpg, Pinia, Razorpay
+- **Stack:** Nuxt 3 (Vue) frontend, Express + TypeScript backend over REST, Neon (serverless Postgres) via `pg` (raw SQL), Pinia, Razorpay
 - **Properties modeled:** 4, all in Kerala — Alleppey, Munnar, Kochi, Varkala. The `state` field on a property is free text (not restricted to Kerala), so the admin panel can already onboard a property in another state without any code change.
 - **Admin model:** one app, two roles — super admin (all properties) and property manager (scoped to one property)
 - **Booking:** guest checkout by default, optional post-booking account; every room shows both "pay online" and "WhatsApp inquire" as parallel options
@@ -14,10 +14,10 @@ A portfolio project: a multi-property hotel booking platform for a fictional Ind
 Three services, three terminals:
 
 ```bash
-# 1. Backend — FastAPI + Neon (http://127.0.0.1:8000, docs at /docs)
+# 1. Backend — Express + TypeScript + Neon (http://127.0.0.1:8000)
 cd backend
-.venv/Scripts/activate   # or source .venv/bin/activate on macOS/Linux
-uvicorn app.main:app --reload --reload-dir app --port 8000
+npm install
+npm run dev
 
 # 2. Customer site — Nuxt (http://localhost:3000)
 cd frontend
@@ -28,7 +28,7 @@ cd admin
 npm run dev -- --port 3001
 ```
 
-First-time backend setup: create `backend/.env` from `backend/.env.example` with your Neon **pooled** connection string, then `python -m app.init_db` to create tables and `python -m app.seed` to load the 4 properties, rooms, rates, testimonials, and two demo admin accounts (shown on the admin login screen).
+First-time backend setup: create `backend/.env` from `backend/.env.example` with your Neon **pooled** connection string, then `npm run init-db` to create tables and `npm run seed` to load the 4 properties, rooms, rates, testimonials, and two demo admin accounts (shown on the admin login screen).
 
 ## Status
 

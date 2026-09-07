@@ -6,7 +6,9 @@
         },
         "backend": {
             "root": "backend",
-            "entrypoint": "app/main.py"
+            "entrypoint": "dist/index.js",
+            "build": "npm run build",
+            "install": "npm install"
         }
     },
     "rewrites": [
