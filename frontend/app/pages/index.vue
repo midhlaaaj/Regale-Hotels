@@ -214,7 +214,7 @@ const advantages = [
         class="flex md:grid md:grid-cols-3 gap-gutter overflow-x-auto md:overflow-visible snap-x snap-mandatory px-margin-mobile md:px-0 py-2 md:py-0 hide-scrollbar"
       >
         <template v-if="testimonialsPending">
-          <div v-for="i in 3" :key="i" class="bg-surface-container-lowest p-8 rounded-lg border border-outline/20 min-w-[85%] sm:min-w-[60%] md:min-w-0 flex-shrink-0 snap-center">
+          <div v-for="i in 3" :key="i" class="bg-surface-container-lowest p-8 rounded-lg border border-outline/20 shadow-[4px_4px_0px_rgba(27,48,34,0.1)] min-w-full md:min-w-0 flex-shrink-0 snap-center">
             <Skeleton class="h-4 w-24 mb-6" />
             <Skeleton class="h-4 w-full mb-2" />
             <Skeleton class="h-4 w-full mb-2" />
@@ -231,7 +231,7 @@ const advantages = [
           :key="t.id"
           :testimonial="t"
           :property-name="properties?.find((p) => p.id === t.property_id)?.name"
-          class="min-w-[85%] sm:min-w-[60%] md:min-w-0 flex-shrink-0 snap-center"
+          class="min-w-full md:min-w-0 flex-shrink-0 snap-center"
         />
       </div>
     </section>
