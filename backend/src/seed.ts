@@ -125,6 +125,13 @@ const TESTIMONIALS = [
     rating: 5,
     quote: "Waking up to the mist over the tea estates in Munnar was magical. The minimalist design perfectly complements the dramatic landscape.",
   },
+  {
+    property_slug: "mattancherry-manor",
+    guest_name: "Daniel Cho",
+    guest_location: "Seoul",
+    rating: 5,
+    quote: "Mattancherry Manor is quietly extraordinary — the high ceilings, the courtyard light in the morning, and staff who remember your name by day two. We are already planning our return.",
+  },
 ];
 
 const PACKAGES = [
@@ -215,8 +222,8 @@ async function seed(): Promise<void> {
 
     for (const t of TESTIMONIALS) {
       await client.query(
-        `INSERT INTO testimonials (property_id, guest_name, guest_location, rating, quote, approved, featured)
-         VALUES ($1,$2,$3,$4,$5,true,true)`,
+        `INSERT INTO testimonials (property_id, guest_name, guest_location, rating, quote, approved, featured, created_at)
+         VALUES ($1,$2,$3,$4,$5,true,true,now())`,
         [slugToPropertyId.get(t.property_slug), t.guest_name, t.guest_location, t.rating, t.quote]
       );
     }
