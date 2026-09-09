@@ -91,7 +91,7 @@ export default <Config>{
         "display-lg": ["64px", { lineHeight: "72px", letterSpacing: "-0.02em", fontWeight: "600" }],
         "display-lg-mobile": ["40px", { lineHeight: "48px", letterSpacing: "-0.01em", fontWeight: "600" }],
         "headline-sm": ["24px", { lineHeight: "32px", fontWeight: "500" }],
-        "headline-md": ["32px", { lineHeight: "40px", fontWeight: "500" }],
+        "headline-md": ["clamp(24px, 5vw + 0.5rem, 32px)", { lineHeight: "1.25", fontWeight: "500" }],
         "body-md": ["16px", { lineHeight: "24px", fontWeight: "400" }],
         "body-lg": ["18px", { lineHeight: "28px", fontWeight: "400" }],
         "label-ledger": ["14px", { lineHeight: "20px", letterSpacing: "0.05em", fontWeight: "400" }],
