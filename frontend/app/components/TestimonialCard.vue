@@ -5,7 +5,7 @@ defineProps<{ testimonial: Testimonial; propertyName?: string }>();
 </script>
 
 <template>
-  <div class="bg-surface p-8 rounded-lg border border-outline/20 shadow-[4px_4px_0px_rgba(27,48,34,0.05)] md:shadow-none md:hover:shadow-[4px_4px_0px_rgba(27,48,34,0.05)] transition-shadow">
+  <div class="bg-surface-container-lowest p-8 rounded-lg border border-outline/20 shadow-[4px_4px_0px_rgba(27,48,34,0.1)] md:shadow-none md:hover:shadow-[4px_4px_0px_rgba(27,48,34,0.1)] transition-shadow">
     <div class="flex text-tertiary mb-6">
       <span
         v-for="n in testimonial.rating"

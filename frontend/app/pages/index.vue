@@ -211,10 +211,10 @@ const advantages = [
     <section class="max-w-container-max mx-auto md:px-margin-desktop py-24 overflow-hidden">
       <h2 class="font-headline-md text-headline-md text-on-background mb-16 text-center px-margin-mobile md:px-0">From The Guest Ledger</h2>
       <div
-        class="flex md:grid md:grid-cols-3 gap-gutter overflow-x-auto md:overflow-visible snap-x snap-mandatory px-margin-mobile md:px-0 pb-2 md:pb-0 hide-scrollbar"
+        class="flex md:grid md:grid-cols-3 gap-gutter overflow-x-auto md:overflow-visible snap-x snap-mandatory px-margin-mobile md:px-0 py-2 md:py-0 hide-scrollbar"
       >
         <template v-if="testimonialsPending">
-          <div v-for="i in 3" :key="i" class="bg-surface p-8 border border-outline/10 min-w-[85%] sm:min-w-[60%] md:min-w-0 flex-shrink-0 snap-center">
+          <div v-for="i in 3" :key="i" class="bg-surface-container-lowest p-8 rounded-lg border border-outline/20 min-w-[85%] sm:min-w-[60%] md:min-w-0 flex-shrink-0 snap-center">
             <Skeleton class="h-4 w-24 mb-6" />
             <Skeleton class="h-4 w-full mb-2" />
             <Skeleton class="h-4 w-full mb-2" />
