@@ -11,6 +11,7 @@ const navLinks = [
 const route = useRoute();
 const router = useRouter();
 const { link: whatsappLink } = useWhatsapp();
+const fabVisible = useFabVisibility();
 const { open: openAuthModal } = useAuthModal();
 const guestAuth = useGuestAuthStore();
 const { request } = useApi();
@@ -38,6 +39,7 @@ watch(
   () => route.path,
   () => {
     menuOpen.value = false;
+    fabVisible.value = true;
   }
 );
 </script>
@@ -242,14 +244,15 @@ watch(
     </footer>
 
     <a
+      v-show="fabVisible"
       :href="whatsappLink()"
       target="_blank"
       rel="noopener noreferrer"
       aria-label="Chat with us on WhatsApp"
       title="WhatsApp concierge"
-      class="fixed bottom-6 right-6 z-[60] bg-whatsapp text-white w-14 h-14 rounded-full flex items-center justify-center shadow-[4px_4px_0px_rgba(27,48,34,0.2)] hover:-translate-y-1 transition-transform"
+      class="fixed bottom-4 right-4 md:bottom-6 md:right-6 z-[60] bg-whatsapp text-white w-11 h-11 md:w-14 md:h-14 rounded-full flex items-center justify-center shadow-[4px_4px_0px_rgba(27,48,34,0.2)] hover:-translate-y-1 transition-transform"
     >
-      <span class="material-symbols-outlined text-[28px]" aria-hidden="true">forum</span>
+      <span class="material-symbols-outlined text-[20px] md:text-[28px]" aria-hidden="true">forum</span>
     </a>
   </div>
 </template>

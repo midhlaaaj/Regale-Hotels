@@ -80,6 +80,25 @@ function proceed(method: "online" | "whatsapp") {
   bookingStore.paymentMethod = method;
   router.push("/booking/details");
 }
+
+// This card carries its own WhatsApp action, so hide the global floating
+// WhatsApp bubble while it's in view — otherwise the fixed button sits on
+// top of "Pay online" / "Inquire on WhatsApp" on mobile.
+const fabVisible = useFabVisibility();
+const selectionCard = ref<HTMLElement | null>(null);
+let observer: IntersectionObserver | null = null;
+watch(selectionCard, (el) => {
+  observer?.disconnect();
+  if (!el) return;
+  observer = new IntersectionObserver(([entry]) => {
+    fabVisible.value = !entry.isIntersecting;
+  });
+  observer.observe(el);
+});
+onUnmounted(() => {
+  observer?.disconnect();
+  fabVisible.value = true;
+});
 </script>
 
 <template>
@@ -198,7 +217,7 @@ function proceed(method: "online" | "whatsapp") {
         </div>
       </div>
 
-      <div class="border border-outline/20 bg-white shadow-[4px_4px_0px_rgba(27,48,34,0.05)] p-7 sticky top-[130px]">
+      <div ref="selectionCard" class="border border-outline/20 bg-white shadow-[4px_4px_0px_rgba(27,48,34,0.05)] p-7 sticky top-[130px]">
         <p class="font-label-ledger text-[11px] tracking-[0.14em] uppercase text-outline mb-3.5">Your selection</p>
         <div class="flex flex-col gap-2.5 border-b border-outline/20 pb-4">
           <div class="flex justify-between gap-3 font-label-ledger text-[13px] text-on-surface-variant">

@@ -34,7 +34,7 @@ router.post(
     if (!guest) {
       // No prior booking under this email — brand new guest record.
       guest = await queryOne<Guest>(
-        `INSERT INTO guests (name, email, phone, password_hash, has_account) VALUES ($1,$2,$3,$4,true) RETURNING *`,
+        `INSERT INTO guests (name, email, phone, password_hash, has_account, created_at) VALUES ($1,$2,$3,$4,true,now()) RETURNING *`,
         [payload.name, payload.email, payload.phone, passwordHash]
       );
     } else {

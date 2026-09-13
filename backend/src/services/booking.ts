@@ -44,8 +44,8 @@ async function heldCount(client: PoolClient, roomTypeId: number, day: string): P
      WHERE room_type_id = $1
        AND check_in <= $2
        AND check_out > $2
-       AND status = ANY($3::text[])
-       AND NOT (status = $4 AND created_at < $5)`,
+       AND status::text = ANY($3::text[])
+       AND NOT (status::text = $4 AND created_at < $5)`,
     [roomTypeId, day, HOLDING_STATUSES, BookingStatus.pending_payment, expiryCutoff]
   );
   return parseInt(rows.rows[0].count, 10);
@@ -131,8 +131,8 @@ async function upsertGuest(client: PoolClient, guestIn: GuestIn): Promise<Guest>
   if (!guest) {
     const verificationStatus = guestIn.id_document_url ? GuestVerificationStatus.pending : GuestVerificationStatus.unverified;
     const inserted = await client.query<Guest>(
-      `INSERT INTO guests (name, email, phone, id_document_url, verification_status)
-       VALUES ($1, $2, $3, $4, $5) RETURNING *`,
+      `INSERT INTO guests (name, email, phone, id_document_url, verification_status, has_account, created_at)
+       VALUES ($1, $2, $3, $4, $5, false, now()) RETURNING *`,
       [guestIn.name, guestIn.email, guestIn.phone, guestIn.id_document_url ?? null, verificationStatus]
     );
     guest = inserted.rows[0];
@@ -167,8 +167,8 @@ export async function createBooking(payload: BookingCreate): Promise<Booking> {
     const status = payload.payment_method === BookingSource.online ? BookingStatus.pending_payment : BookingStatus.pending_whatsapp;
 
     const bookingRes = await client.query<Booking>(
-      `INSERT INTO bookings (property_id, room_type_id, rate_plan_id, guest_id, check_in, check_out, guests_count, status, source, total_amount)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) RETURNING *`,
+      `INSERT INTO bookings (property_id, room_type_id, rate_plan_id, guest_id, check_in, check_out, guests_count, status, source, total_amount, created_at, updated_at)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,now(),now()) RETURNING *`,
       [
         property.id,
         roomType.id,
@@ -186,7 +186,7 @@ export async function createBooking(payload: BookingCreate): Promise<Booking> {
 
     if (payload.payment_method === BookingSource.online) {
       await client.query(
-        `INSERT INTO payments (booking_id, gateway, amount, status) VALUES ($1,$2,$3,$4)`,
+        `INSERT INTO payments (booking_id, gateway, amount, status, created_at) VALUES ($1,$2,$3,$4,now())`,
         [booking.id, PaymentGateway.stub, totalAmount, PaymentStatus.pending]
       );
     }
