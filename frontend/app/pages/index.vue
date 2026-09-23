@@ -43,6 +43,22 @@ const destinationOptions = computed(() => {
 });
 
 const destination = ref("");
+const destinationOpen = ref(false);
+const destinationRoot = ref<HTMLElement | null>(null);
+const filteredDestinations = computed(() => {
+  const q = destination.value.trim().toLowerCase();
+  if (!q) return destinationOptions.value;
+  return destinationOptions.value.filter((d) => d.toLowerCase().includes(q));
+});
+function pickDestination(d: string) {
+  destination.value = d;
+  destinationOpen.value = false;
+}
+function onDestinationDocumentClick(e: MouseEvent) {
+  if (destinationRoot.value && !destinationRoot.value.contains(e.target as Node)) destinationOpen.value = false;
+}
+onMounted(() => document.addEventListener("click", onDestinationDocumentClick));
+onUnmounted(() => document.removeEventListener("click", onDestinationDocumentClick));
 const today = new Date().toISOString().slice(0, 10);
 const inWeek = new Date(Date.now() + 7 * 86400000).toISOString().slice(0, 10);
 const inNineDays = new Date(Date.now() + 9 * 86400000).toISOString().slice(0, 10);
@@ -116,20 +132,34 @@ const advantages = [
          up over the hero on larger screens without needing to guess its height. -->
     <div class="relative z-20 w-full max-w-4xl mx-auto px-margin-mobile md:px-0 -mt-8 sm:-mt-12 md:-mt-14">
       <div class="bg-surface p-6 shadow-[4px_4px_0px_rgba(27,48,34,0.05)] border border-outline/10 flex flex-col md:flex-row gap-6 items-end">
-        <div class="w-full md:w-1/3 flex flex-col gap-2 ledger-line pb-2 relative">
+        <div ref="destinationRoot" class="w-full md:w-1/3 flex flex-col gap-2 ledger-line pb-2 relative">
           <label class="font-label-ledger text-label-ledger text-on-surface-variant uppercase text-xs">Destination</label>
           <div class="flex items-center gap-2 text-on-surface">
             <span class="material-symbols-outlined text-secondary">location_on</span>
             <input
               v-model="destination"
               type="text"
-              list="destination-options"
+              autocomplete="off"
               placeholder="Where to?"
               class="w-full bg-transparent border-none p-0 focus:ring-0 text-body-md placeholder:text-outline-variant"
+              @focus="destinationOpen = true"
             />
-            <datalist id="destination-options">
-              <option v-for="d in destinationOptions" :key="d" :value="d" />
-            </datalist>
+          </div>
+
+          <div
+            v-if="destinationOpen && filteredDestinations.length"
+            class="absolute z-30 top-full left-0 right-0 mt-2 max-h-64 overflow-y-auto bg-white border border-outline/20 shadow-[4px_4px_0px_rgba(27,48,34,0.08)] rounded-sm py-1.5"
+          >
+            <button
+              v-for="d in filteredDestinations"
+              :key="d"
+              type="button"
+              class="w-full flex items-center gap-2.5 px-4 py-2.5 text-left text-body-md text-on-background hover:bg-surface-container-low transition-colors"
+              @mousedown.prevent="pickDestination(d)"
+            >
+              <span class="material-symbols-outlined text-secondary text-[18px]">location_on</span>
+              {{ d }}
+            </button>
           </div>
         </div>
         <div class="w-full md:w-1/3 flex gap-3">
