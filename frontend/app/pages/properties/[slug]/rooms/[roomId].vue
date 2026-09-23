@@ -31,11 +31,16 @@ const toISO = (d: Date) => d.toISOString().slice(0, 10);
 // Prefill from the guest's search (homepage/properties list) when they arrived with one.
 const checkIn = ref((route.query.check_in as string) || toISO(in7));
 const checkOut = ref((route.query.check_out as string) || toISO(in9));
-const guestsCount = ref(Number(route.query.guests) || 2);
+const adultsCount = ref(Number(route.query.guests) || 2);
+const childrenCount = ref(0);
+const guestsCount = computed(() => adultsCount.value + childrenCount.value);
 
 watchEffect(() => {
-  if (room.value && guestsCount.value > room.value.max_occupancy) {
-    guestsCount.value = room.value.max_occupancy;
+  if (!room.value) return;
+  const max = room.value.max_occupancy;
+  if (adultsCount.value > max) adultsCount.value = max;
+  if (adultsCount.value + childrenCount.value > max) {
+    childrenCount.value = Math.max(0, max - adultsCount.value);
   }
 });
 
@@ -226,13 +231,11 @@ onUnmounted(() => {
           <div class="flex justify-between gap-3 font-label-ledger text-[13px] text-on-surface-variant">
             <span>Dates</span><span class="text-on-background text-right">{{ checkIn }} → {{ checkOut }}</span>
           </div>
-          <div class="flex justify-between gap-3 font-label-ledger text-[13px] text-on-surface-variant">
+          <div class="flex justify-between items-center gap-3 font-label-ledger text-[13px] text-on-surface-variant">
             <span>Guests</span>
-            <span class="text-on-background text-right">
-              <select v-model.number="guestsCount" class="bg-transparent text-right">
-                <option v-for="n in room.max_occupancy" :key="n" :value="n">{{ n }}</option>
-              </select>
-            </span>
+            <div class="w-auto">
+              <GuestsPicker v-model:adults="adultsCount" v-model:children="childrenCount" />
+            </div>
           </div>
           <div class="flex justify-between gap-3 font-label-ledger text-[13px] text-on-surface-variant">
             <span>Rate plan</span><span class="text-on-background text-right">{{ selectedRatePlan?.name }}</span>

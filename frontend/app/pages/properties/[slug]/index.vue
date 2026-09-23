@@ -35,8 +35,12 @@ const gallery = computed(() => {
   const p = property.value;
   if (!p) return [];
   const roomImages = (p.room_types || []).flatMap((r) => r.images);
-  return [p.cover_image_url, ...roomImages, p.cover_image_url].slice(0, 5);
+  return [p.cover_image_url, ...roomImages, p.cover_image_url];
 });
+// Primary photo up top, exactly three thumbnails below it — any further
+// photos are just counted on the third thumbnail rather than growing the grid.
+const thumbnails = computed(() => gallery.value.slice(1, 4));
+const extraPhotoCount = computed(() => Math.max(0, gallery.value.length - 4));
 
 const fromPrice = computed(() =>
   property.value?.room_types?.length
@@ -92,7 +96,26 @@ const stats = computed(() => {
         <div class="relative min-h-[320px]">
           <img :src="gallery[0]" :alt="property.name" class="w-full h-full min-h-[320px] max-h-[520px] object-cover block" />
         </div>
-        <div class="grid grid-cols-2 gap-2">
+        <!-- Mobile: primary photo, then exactly three thumbnails, with any
+             further photos just counted on the third one. -->
+        <div class="grid grid-cols-3 gap-2 md:hidden">
+          <div v-for="(img, i) in thumbnails" :key="i" class="relative">
+            <img
+              :src="img"
+              :alt="`${property.name} — photo ${i + 2}`"
+              loading="lazy"
+              class="w-full h-full min-h-[100px] object-cover block"
+            />
+            <div
+              v-if="i === thumbnails.length - 1 && extraPhotoCount > 0"
+              class="absolute inset-0 bg-gray-800/70 flex items-center justify-center"
+            >
+              <span class="font-label-ledger text-sm text-surface-bright">+{{ extraPhotoCount }}</span>
+            </div>
+          </div>
+        </div>
+        <!-- Desktop: original 2x2 thumbnail grid alongside the primary photo. -->
+        <div class="hidden md:grid grid-cols-2 gap-2">
           <img
             v-for="(img, i) in gallery.slice(1)"
             :key="i"
@@ -153,10 +176,10 @@ const stats = computed(() => {
         <p class="font-price-display text-[32px] text-on-background mb-1">₹{{ fromPrice.toLocaleString("en-IN") }}</p>
         <p class="text-sm text-outline mb-6">excl. 12% GST</p>
         <NuxtLink
-          :to="`/properties/${property.slug}#rooms`"
+          :to="{ path: `/properties/${property.slug}/rooms`, query: searchQuery }"
           class="w-full block text-center bg-primary text-on-primary border-none cursor-pointer py-4 rounded font-label-ledger text-[13px] tracking-[0.1em] uppercase hover:bg-primary-container transition-colors"
         >
-          Check availability
+          Explore rooms
         </NuxtLink>
         <a
           :href="whatsappLink(`Hi, I have a question about ${property.name}`)"
@@ -168,46 +191,6 @@ const stats = computed(() => {
           <span class="material-symbols-outlined text-[17px]">forum</span>Ask on WhatsApp
         </a>
         <p class="text-[13px] text-outline mt-3.5 text-center">No card charged until you confirm.</p>
-      </div>
-    </section>
-
-    <section id="rooms" class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop pt-12 md:pt-20 scroll-mt-24">
-      <div class="flex justify-between items-end flex-wrap gap-3 mb-6">
-        <h2 class="font-display-lg text-[clamp(28px,4vw,32px)] text-on-background">Rooms at this property</h2>
-        <span class="font-label-ledger text-xs tracking-[0.1em] uppercase text-outline"
-          >{{ property.room_types?.length }} room types</span
-        >
-      </div>
-      <div class="border-t border-outline/20">
-        <NuxtLink
-          v-for="r in property.room_types"
-          :key="r.id"
-          :to="{ path: `/properties/${property.slug}/rooms/${r.id}`, query: searchQuery }"
-          class="cursor-pointer border-b border-outline/15 py-5 flex flex-wrap gap-5 items-center hover:bg-surface-container-low transition-colors"
-        >
-          <img
-            :src="r.images[0] || property.cover_image_url"
-            :alt="r.name"
-            loading="lazy"
-            class="w-[168px] h-[118px] object-cover block flex-shrink-0"
-          />
-          <div class="flex-1 min-w-[200px]">
-            <h3 class="font-display-lg text-headline-sm text-on-background mb-1.5">{{ r.name }}</h3>
-            <p class="text-[15px] leading-[23px] text-on-surface-variant mb-2 max-w-[46ch]">{{ r.description }}</p>
-            <p class="font-label-ledger text-[11px] tracking-[0.1em] uppercase text-outline">
-              Sleeps {{ r.max_occupancy }}
-            </p>
-          </div>
-          <div class="flex flex-col items-end gap-2.5 min-w-[150px]">
-            <div class="text-right">
-              <p class="font-label-ledger text-[11px] tracking-[0.12em] uppercase text-outline mb-0.5">From / night</p>
-              <p class="font-price-display text-price-display text-on-background">₹{{ r.base_price.toLocaleString("en-IN") }}</p>
-            </div>
-            <span class="font-label-ledger text-xs tracking-[0.08em] uppercase text-primary border-b border-primary pb-0.5"
-              >View room</span
-            >
-          </div>
-        </NuxtLink>
       </div>
     </section>
 
