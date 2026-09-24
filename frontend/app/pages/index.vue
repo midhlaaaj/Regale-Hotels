@@ -34,12 +34,7 @@ const fromPrice = (p: Property) => p.room_types?.length
   : undefined;
 
 const destinationOptions = computed(() => {
-  const cities = new Set<string>();
-  for (const p of properties.value ?? []) {
-    cities.add(p.city);
-    cities.add(p.name);
-  }
-  return [...cities];
+  return [...new Set((properties.value ?? []).map((p) => p.city))];
 });
 
 const destination = ref("");
